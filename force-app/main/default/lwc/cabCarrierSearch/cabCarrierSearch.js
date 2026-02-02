@@ -1,8 +1,9 @@
 import { LightningElement, track } from 'lwc';
+import { NavigationMixin } from 'lightning/navigation'; // Necesario para la navegación
 import searchCarrier from '@salesforce/apex/CABIntegrationController.searchCarrier';
 import { ShowToastEvent } from 'lightning/platformShowToastEvent';
 
-export default class CabCarrierSearch extends LightningElement {
+export default class CabCarrierSearch extends NavigationMixin(LightningElement) {
     @track dotNumber = '';
     @track isLoading = false;
 
@@ -42,15 +43,39 @@ export default class CabCarrierSearch extends LightningElement {
         try {
             const result = await searchCarrier({ dot: this.dotNumber });
 
+            let targetId;
+            let toastTitle;
+            let toastMessage;
+
+            // Lógica para determinar si es un redireccionamiento o creación nueva
+            if (result.startsWith('REDIRECT:')) {
+                targetId = result.replace('REDIRECT:', '');
+                toastTitle = 'Lead Existente';
+                toastMessage = 'Se encontró un Lead con ese DOT. Redirigiendo...';
+            } else {
+                targetId = result;
+                toastTitle = 'Éxito';
+                toastMessage = 'Nuevo Lead creado a partir de CAB Advantage.';
+            }
+
+            // 1. Mostrar confirmación
             this.dispatchEvent(
                 new ShowToastEvent({
-                    title: 'Success',
-                    message: 'Carrier data retrieved successfully',
+                    title: toastTitle,
+                    message: toastMessage,
                     variant: 'success'
                 })
             );
 
-            console.log('Result:', result);
+            // 2. Ejecutar la navegación al registro
+            this[NavigationMixin.Navigate]({
+                type: 'standard__recordPage',
+                attributes: {
+                    recordId: targetId,
+                    objectApiName: 'Lead',
+                    actionName: 'view'
+                }
+            });
 
         } catch (error) {
             this.dispatchEvent(
