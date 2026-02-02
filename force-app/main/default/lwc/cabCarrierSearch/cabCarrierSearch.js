@@ -8,15 +8,31 @@ export default class CabCarrierSearch extends LightningElement {
 
     handleInputChange(event) {
         this.dotNumber = event.target.value;
+
+        // Limpiamos la validación personalizada cada vez que el usuario escribe
+        const inputField = event.target;
+        inputField.setCustomValidity('');
+        inputField.reportValidity();
     }
 
-    // Detects key presses
     handleKeyUp(event) {
-        // The code 13 is for the Enter key
         const isEnterKey = event.keyCode === 13;
+        const inputField = this.template.querySelector('lightning-input');
 
-        if (isEnterKey && !this.isLoading && this.dotNumber) {
-            this.handleSearch();
+        if (isEnterKey && !this.isLoading) {
+            // 1. Validar que no esté vacío
+            if (!this.dotNumber) {
+                inputField.setCustomValidity('Por favor, ingresa un número DOT');
+                inputField.reportValidity();
+                return;
+            }
+
+            // 2. Validar que cumpla con el patrón numérico (checkValidity usa el pattern del HTML)
+            if (inputField.checkValidity()) {
+                this.handleSearch();
+            } else {
+                inputField.reportValidity();
+            }
         }
     }
 
@@ -28,18 +44,19 @@ export default class CabCarrierSearch extends LightningElement {
 
             this.dispatchEvent(
                 new ShowToastEvent({
-                    title: 'Success',
-                    message: 'Carrier data retrieved successfully',
+                    title: 'Éxito',
+                    message: 'Datos del carrier recuperados correctamente',
                     variant: 'success'
                 })
             );
 
             console.log('Result:', result);
+
         } catch (error) {
             this.dispatchEvent(
                 new ShowToastEvent({
-                    title: 'Error',
-                    message: error.body?.message || 'An error occurred during the search',
+                    title: 'Error en la búsqueda',
+                    message: error.body?.message || 'Ocurrió un error al conectar con el servidor',
                     variant: 'error'
                 })
             );

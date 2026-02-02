@@ -5,12 +5,14 @@
                 <lightning-input 
                     type="text" 
                     label="DOT Number" 
-                    placeholder="Write a motor carrier DOT and press Enter" 
+                    placeholder="Write a motor carrier and press Enter" 
                     value={dotNumber}
                     onchange={handleInputChange}
                     onkeyup={handleKeyUp}
                     disabled={isLoading}
-                    data-id="searchField">
+                    message-when-pattern-mismatch="El número DOT solo debe contener números"
+                    pattern="^[0-9]*$"
+                    class="search-input">
                 </lightning-input>
             </div>
 
@@ -18,10 +20,10 @@
                 <div class="slds-p-top_medium slds-is-relative">
                     <div class="slds-align_absolute-center slds-text-color_weak">
                         <lightning-spinner 
-                            alternative-text="Loading" 
+                            alternative-text="Searching" 
                             size="small">
                         </lightning-spinner>
-                        <span class="slds-m-left_large">Loading Carrier Info (Might take a while)</span>
+                        <span class="slds-m-left_large">buscando (puede tardar unos segundos)</span>
                     </div>
                 </div>
             </template>
