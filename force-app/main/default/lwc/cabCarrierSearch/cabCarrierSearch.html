@@ -1,0 +1,41 @@
+<template>
+    <lightning-card title="CAB Advantage Search" icon-name="standard:search">
+        <div class="slds-p-around_medium">
+            <div class="slds-form-element">
+                <div class="slds-grid slds-gutters slds-alignment-bump_bottom">
+                    <div class="slds-col slds-size_2-of-3">
+                        <lightning-input 
+                            type="text" 
+                            label="DOT Number" 
+                            placeholder="Write a motor carrier" 
+                            value={dotNumber}
+                            onchange={handleInputChange}
+                            disabled={isLoading}>
+                        </lightning-input>
+                    </div>
+                    <div class="slds-col slds-size_1-of-3 slds-align-middle">
+                        <lightning-button 
+                            variant="brand" 
+                            label="Search" 
+                            onclick={handleSearch} 
+                            disabled={isButtonDisabled}
+                            class="slds-m-top_large">
+                        </lightning-button>
+                    </div>
+                </div>
+            </div>
+
+            <template if:true={isLoading}>
+                <div class="slds-p-top_medium slds-is-relative">
+                    <div class="slds-align_absolute-center slds-text-color_weak">
+                        <lightning-spinner 
+                            alternative-text="Loading" 
+                            size="small">
+                        </lightning-spinner>
+                        <span class="slds-m-left_large">buscando (puede tardar unos segundos)</span>
+                    </div>
+                </div>
+            </template>
+        </div>
+    </lightning-card>
+</template>
