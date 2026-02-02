@@ -2,27 +2,16 @@
     <lightning-card title="CAB Advantage Search" icon-name="standard:search">
         <div class="slds-p-around_medium">
             <div class="slds-form-element">
-                <div class="slds-grid slds-gutters slds-alignment-bump_bottom">
-                    <div class="slds-col slds-size_2-of-3">
-                        <lightning-input 
-                            type="text" 
-                            label="DOT Number" 
-                            placeholder="Write a motor carrier" 
-                            value={dotNumber}
-                            onchange={handleInputChange}
-                            disabled={isLoading}>
-                        </lightning-input>
-                    </div>
-                    <div class="slds-col slds-size_1-of-3 slds-align-middle">
-                        <lightning-button 
-                            variant="brand" 
-                            label="Search" 
-                            onclick={handleSearch} 
-                            disabled={isButtonDisabled}
-                            class="slds-m-top_large">
-                        </lightning-button>
-                    </div>
-                </div>
+                <lightning-input 
+                    type="text" 
+                    label="DOT Number" 
+                    placeholder="Write a motor carrier DOT and press Enter" 
+                    value={dotNumber}
+                    onchange={handleInputChange}
+                    onkeyup={handleKeyUp}
+                    disabled={isLoading}
+                    data-id="searchField">
+                </lightning-input>
             </div>
 
             <template if:true={isLoading}>
@@ -32,7 +21,7 @@
                             alternative-text="Loading" 
                             size="small">
                         </lightning-spinner>
-                        <span class="slds-m-left_large">buscando (puede tardar unos segundos)</span>
+                        <span class="slds-m-left_large">Loading Carrier Info (Might take a while)</span>
                     </div>
                 </div>
             </template>

@@ -10,19 +10,22 @@ export default class CabCarrierSearch extends LightningElement {
         this.dotNumber = event.target.value;
     }
 
-    get isButtonDisabled() {
-        return this.isLoading || !this.dotNumber;
+    // Detects key presses
+    handleKeyUp(event) {
+        // The code 13 is for the Enter key
+        const isEnterKey = event.keyCode === 13;
+
+        if (isEnterKey && !this.isLoading && this.dotNumber) {
+            this.handleSearch();
+        }
     }
 
     async handleSearch() {
-        if (!this.dotNumber) return;
-
         this.isLoading = true;
 
         try {
-            // Llamada al método Apex que conectará con tu Middleware
             const result = await searchCarrier({ dot: this.dotNumber });
-            
+
             this.dispatchEvent(
                 new ShowToastEvent({
                     title: 'Success',
@@ -30,7 +33,7 @@ export default class CabCarrierSearch extends LightningElement {
                     variant: 'success'
                 })
             );
-            
+
             console.log('Result:', result);
         } catch (error) {
             this.dispatchEvent(
