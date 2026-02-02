@@ -5,12 +5,12 @@
                 <lightning-input 
                     type="text" 
                     label="DOT Number" 
-                    placeholder="Write a motor carrier and press Enter" 
+                    placeholder="Write a DOT number and press Enter" 
                     value={dotNumber}
                     onchange={handleInputChange}
                     onkeyup={handleKeyUp}
                     disabled={isLoading}
-                    message-when-pattern-mismatch="El número DOT solo debe contener números"
+                    message-when-pattern-mismatch="The DOT number must contain only numbers"
                     pattern="^[0-9]*$"
                     class="search-input">
                 </lightning-input>
@@ -23,7 +23,7 @@
                             alternative-text="Searching" 
                             size="small">
                         </lightning-spinner>
-                        <span class="slds-m-left_large">buscando (puede tardar unos segundos)</span>
+                        <span class="slds-m-left_large">Searching (Might take a while)</span>
                     </div>
                 </div>
             </template>

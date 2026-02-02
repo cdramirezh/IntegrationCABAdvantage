@@ -22,7 +22,7 @@ export default class CabCarrierSearch extends LightningElement {
         if (isEnterKey && !this.isLoading) {
             // 1. Validar que no esté vacío
             if (!this.dotNumber) {
-                inputField.setCustomValidity('Por favor, ingresa un número DOT');
+                inputField.setCustomValidity('Please enter a DOT number.');
                 inputField.reportValidity();
                 return;
             }
@@ -44,8 +44,8 @@ export default class CabCarrierSearch extends LightningElement {
 
             this.dispatchEvent(
                 new ShowToastEvent({
-                    title: 'Éxito',
-                    message: 'Datos del carrier recuperados correctamente',
+                    title: 'Success',
+                    message: 'Carrier data retrieved successfully',
                     variant: 'success'
                 })
             );
@@ -55,8 +55,8 @@ export default class CabCarrierSearch extends LightningElement {
         } catch (error) {
             this.dispatchEvent(
                 new ShowToastEvent({
-                    title: 'Error en la búsqueda',
-                    message: error.body?.message || 'Ocurrió un error al conectar con el servidor',
+                    title: 'Error in search',
+                    message: error.body?.message || 'An error occurred while connecting to the server',
                     variant: 'error'
                 })
             );
