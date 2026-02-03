@@ -10,6 +10,10 @@ public with sharing class CABIntegrationController {
 
     @AuraEnabled
     public static String searchCarrier(String dot) {
+        Integer maxTimeout = 120 * 1000; // seconds
+        // This has to be configured as a Named Credential to the CAB Advantage BOT Middleware Server
+        String cabAdvantageBotEndpoint = 'callout:CAB_Advantage_Bot/get_carrier_data?dot=';
+
         // 1. Buscar si ya existe un Lead con ese DOT
         if (!Schema.sObjectType.Lead.isAccessible()) {
             throw new AuraHandledException('Insufficient privileges to access Lead records.');
@@ -30,11 +34,22 @@ public with sharing class CABIntegrationController {
             // 3. Configuración del Callout (Simulado por ahora)
             // En un escenario real, aquí descomentarías el http.send(request)
             
-            // Simulamos la llegada del JSON que mencionaste
-            String mockJsonResponse = '{"carrierData": {"carrierName": "Carrier Name Test"}}';
+
+            Http http = new Http();
+            HttpRequest request = new HttpRequest();
+            request.setEndpoint( cabAdvantageBotEndpoint + dot);
+            request.setMethod('GET');
+            request.setTimeout(maxTimeout);
+
+            HttpResponse response = http.send(request);
+            
+            if (response.getStatusCode() != 200) {
+                System.debug('Error response: ' + response.getBody());
+                throw new AuraHandledException('Error from server: ' + response.getStatus());
+            }
             
             // 4. Deserializar la respuesta
-            CABResponse responseData = (CABResponse) JSON.deserialize(mockJsonResponse, CABResponse.class);
+            CABResponse responseData = (CABResponse) JSON.deserialize(response.getBody(), CABResponse.class);
             
             if (responseData.carrierData == null || String.isBlank(responseData.carrierData.carrierName)) {
                 throw new AuraHandledException('La respuesta del bot no contiene información válida del carrier.');
