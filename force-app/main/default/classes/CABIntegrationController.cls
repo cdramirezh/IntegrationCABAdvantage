@@ -12,7 +12,7 @@ public with sharing class CABIntegrationController {
     public static String searchCarrier(String dot) {
         Integer maxTimeout = 120 * 1000; // seconds
         // This has to be configured as a Named Credential to the CAB Advantage BOT Middleware Server
-        String cabAdvantageBotEndpoint = 'callout:CAB_Advantage_Bot/get_carrier_data?dot=';
+        String cabAdvantageBotEndpoint = 'https://royalty-bot-production.up.railway.app/get_carrier_data?dot=';
 
         // 1. Buscar si ya existe un Lead con ese DOT
         if (!Schema.sObjectType.Lead.isAccessible()) {
