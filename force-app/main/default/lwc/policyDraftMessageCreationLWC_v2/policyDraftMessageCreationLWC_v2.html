@@ -1,0 +1,28 @@
+<template>
+    <lightning-card title="New Message" icon-name="utility:chat">
+        <div class="slds-p-around_small">            
+
+            <!-- Message Creation Form -->
+            <lightning-record-edit-form object-api-name="Message__c" onsuccess={handleSuccess}>
+                
+                <!-- Chat ID input (Hidden) -->
+                <lightning-input-field field-name="Chat__c" value={chatId} class="slds-hide"></lightning-input-field>
+                
+                <!-- Sender Field (Lookup) -->
+                <lightning-input-field field-name="Sender__c"></lightning-input-field>
+
+                <!-- Related MGA Quote Field (Lookup) -->
+                <lightning-input-field field-name="Related_MGA_Quote__c"></lightning-input-field>
+
+                <!-- Related Insurance Company Field (Lookup) -->
+                <lightning-input-field field-name="Related_Insurance_Co__c"></lightning-input-field>
+
+                <!-- Message Body Input -->
+                <lightning-input-field field-name="Body__c"></lightning-input-field>
+
+                <!-- Send Button -->
+                <lightning-button variant="brand" label="Send Message" type="submit"></lightning-button>
+            </lightning-record-edit-form>
+        </div>
+    </lightning-card>
+</template>

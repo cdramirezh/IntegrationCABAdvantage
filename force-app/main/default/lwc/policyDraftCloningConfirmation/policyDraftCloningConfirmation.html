@@ -1,0 +1,243 @@
+<template>
+    <lightning-card title="A new Policy Draft will be created with the following records cloned" icon-name="standard:record">
+        <div class="slds-p-horizontal_medium">
+            <template if:false={hasAnyRecords}>
+                <div class="slds-text-align_center slds-p-vertical_large">
+                    <lightning-icon icon-name="utility:info" size="large" variant="inverse"></lightning-icon>
+                    <p class="slds-text-heading_small slds-m-top_small">No records found</p>
+                    <p class="slds-text-body_regular">No records were retrieved from the flow.</p>
+                </div>
+            </template>
+
+            <!-- Coverage Records Section -->
+            <template if:true={hasCoverageRecords}>
+                <div class="slds-section slds-is-open slds-m-bottom_medium">
+                    <h3 class="slds-section__title slds-theme_shade">
+                        <span class="slds-truncate slds-p-horizontal_small" title={coverageLabel}>
+                            <lightning-icon icon-name="standard:account" size="small" class="slds-m-right_x-small"></lightning-icon>
+                            {coverageLabel} ({processedCoverageRecords.length})
+                        </span>
+                    </h3>
+                    <div class="slds-section__content">
+                        <div class="slds-grid slds-wrap slds-gutters">
+                            <template for:each={processedCoverageRecords} for:item="record">
+                                <div key={record.Id} class="slds-col slds-size_1-of-1 slds-medium-size_1-of-2 slds-large-size_1-of-3">
+                                    <article class="slds-card slds-m-bottom_small">
+                                        <div class="slds-card__header slds-grid">
+                                            <header class="slds-media slds-media_center slds-has-flexi-truncate">
+                                                <div class="slds-media__body">
+                                                    <h2 class="slds-card__header-title">
+                                                        <span class="slds-truncate" title={record.ProductName}>{record.ProductName}</span>
+                                                    </h2>
+                                                </div>
+                                            </header>
+                                        </div>
+                                        <div class="slds-card__body slds-card__body_inner">
+                                            <!--
+                                            <template for:each={record.fields} for:item="field">
+                                                <dl key={field.apiName} class="slds-list_horizontal slds-wrap slds-m-bottom_x-small">
+                                                    <dt class="slds-item_label slds-text-color_weak slds-truncate" title={field.label}>
+                                                        {field.label}:
+                                                    </dt>
+                                                    <dd class="slds-item_detail slds-truncate" title={field.value}>
+                                                        {field.value}
+                                                    </dd>
+                                                </dl>
+                                            </template>
+                                        -->
+                                            <dl class="slds-list_horizontal slds-wrap slds-m-bottom_x-small">
+                                                <dt class="slds-item_label slds-text-color_weak slds-truncate" title="Coverage Limit">
+                                                    Limit:
+                                                </dt>
+                                                <dd class="slds-item_detail slds-truncate" title={record.ProductLimit}>
+                                                    {record.ProductLimit}
+                                                </dd>
+                                                <dt class="slds-item_label slds-text-color_weak slds-truncate" title="Coverage Deductible">
+                                                    Deductible:
+                                                </dt>
+                                                <dd class="slds-item_detail slds-truncate" title={record.ProductDeductible}>
+                                                    {record.ProductDeductible}
+                                                </dd>
+                                            </dl>
+                                        </div>
+                                    </article>
+                                </div>
+                            </template>
+                        </div>
+                    </div>
+                </div>
+            </template>
+
+            <!-- Vehicle Records Section -->
+            <template if:true={hasVehicleRecords}>
+                <div class="slds-section slds-is-open slds-m-bottom_medium">
+                    <h3 class="slds-section__title slds-theme_shade">
+                        <span class="slds-truncate slds-p-horizontal_small" title={vehicleLabel}>
+                            <lightning-icon icon-name="standard:product" size="small" class="slds-m-right_x-small"></lightning-icon>
+                            {vehicleLabel} ({processedVehicleRecords.length})
+                        </span>
+                    </h3>
+                    <div class="slds-section__content">
+                        <div class="slds-grid slds-wrap slds-gutters">
+                            <template for:each={processedVehicleRecords} for:item="record">
+                                <div key={record.Id} class="slds-col slds-size_1-of-1 slds-medium-size_1-of-2 slds-large-size_1-of-3">
+                                    <article class="slds-card slds-m-bottom_small">
+                                        <div class="slds-card__header slds-grid">
+                                            <header class="slds-media slds-media_center slds-has-flexi-truncate">
+                                                <div class="slds-media__body">
+                                                    <h2 class="slds-card__header-title">
+                                                        <span class="slds-truncate" title={record.VehicleVIN}>{record.VehicleVIN}</span>
+                                                    </h2>
+                                                </div>
+                                            </header>
+                                        </div>
+                                        <div class="slds-card__body slds-card__body_inner">
+                                            <!--
+                                            <template for:each={record.fields} for:item="field">
+                                                <dl key={field.apiName} class="slds-list_horizontal slds-wrap slds-m-bottom_x-small">
+                                                    <dt class="slds-item_label slds-text-color_weak slds-truncate" title={field.label}>
+                                                        {field.label}:
+                                                    </dt>
+                                                    <dd class="slds-item_detail slds-truncate" title={field.value}>
+                                                        {field.value}
+                                                    </dd>
+                                                </dl>
+                                            </template>
+                                            -->
+                                            <dl class="slds-list_horizontal slds-wrap slds-m-bottom_x-small">
+                                                <dt class="slds-item_label slds-text-color_weak slds-truncate" title="Vehicle Make">
+                                                    Make:
+                                                </dt>
+                                                <dd class="slds-item_detail slds-truncate" title={record.VehicleMake}>
+                                                    {record.VehicleMake}
+                                                </dd>
+                                                <dt class="slds-item_label slds-text-color_weak slds-truncate" title="Vehicle Year">
+                                                    Year: 
+                                                </dt>
+                                                <dd class="slds-item_detail slds-truncate" title={record.VehicleYear}>
+                                                    {record.VehicleYear}
+                                                </dd>
+                                            </dl>                                                            
+                                        </div>
+                                    </article>
+                                </div>
+                            </template>
+                        </div>
+                    </div>
+                </div>
+            </template>
+
+            <!-- Trailer Records Section -->
+            <template if:true={hasTrailerRecords}>
+                <div class="slds-section slds-is-open slds-m-bottom_medium">
+                    <h3 class="slds-section__title slds-theme_shade">
+                        <span class="slds-truncate slds-p-horizontal_small" title={trailerLabel}>
+                            <lightning-icon icon-name="standard:asset_object" size="small" class="slds-m-right_x-small"></lightning-icon>
+                            {trailerLabel} ({processedTrailerRecords.length})
+                        </span>
+                    </h3>
+                    <div class="slds-section__content">
+                        <div class="slds-grid slds-wrap slds-gutters">
+                            <template for:each={processedTrailerRecords} for:item="record">
+                                <div key={record.Id} class="slds-col slds-size_1-of-1 slds-medium-size_1-of-2 slds-large-size_1-of-3">
+                                    <article class="slds-card slds-m-bottom_small">
+                                        <div class="slds-card__header slds-grid">
+                                            <header class="slds-media slds-media_center slds-has-flexi-truncate">
+                                                <div class="slds-media__body">
+                                                    <h2 class="slds-card__header-title">
+                                                        <span class="slds-truncate" title={record.TrailerVIN}>{record.TrailerVIN}</span>
+                                                    </h2>
+                                                </div>
+                                            </header>
+                                        </div>
+                                        <div class="slds-card__body slds-card__body_inner">
+                                            <!--
+                                            <template for:each={record.fields} for:item="field">
+                                                <dl key={field.apiName} class="slds-list_horizontal slds-wrap slds-m-bottom_x-small">
+                                                    <dt class="slds-item_label slds-text-color_weak slds-truncate" title={field.label}>
+                                                        {field.label}:
+                                                    </dt>
+                                                    <dd class="slds-item_detail slds-truncate" title={field.value}>
+                                                        {field.value}
+                                                    </dd>
+                                                </dl>
+                                            </template>
+                                        -->
+                                            <dl class="slds-list_horizontal slds-wrap slds-m-bottom_x-small">
+                                                <dt class="slds-item_label slds-text-color_weak slds-truncate" title="Trailer Make">
+                                                    Make:
+                                                </dt>
+                                                <dd class="slds-item_detail slds-truncate" title={record.TrailerMake}>
+                                                    {record.TrailerMake}
+                                                </dd>
+                                                <dt class="slds-item_label slds-text-color_weak slds-truncate" title="Trailer Year">
+                                                    Year:
+                                                </dt>
+                                                <dd class="slds-item_detail slds-truncate" title={record.TrailerYear}>
+                                                    {record.TrailerYear}
+                                                </dd>
+                                            </dl>
+                                        </div>
+                                    </article>
+                                </div>
+                            </template>
+                        </div>
+                    </div>
+                </div>
+            </template>
+
+            <!-- Driver Records Section -->
+            <template if:true={hasDriverRecords}>
+                <div class="slds-section slds-is-open slds-m-bottom_medium">
+                    <h3 class="slds-section__title slds-theme_shade">
+                        <span class="slds-truncate slds-p-horizontal_small" title={driverLabel}>
+                            <lightning-icon icon-name="standard:contact" size="small" class="slds-m-right_x-small"></lightning-icon>
+                            {driverLabel} ({processedDriverRecords.length})
+                        </span>
+                    </h3>
+                    <div class="slds-section__content">
+                        <div class="slds-grid slds-wrap slds-gutters">
+                            <template for:each={processedDriverRecords} for:item="record">
+                                <div key={record.Id} class="slds-col slds-size_1-of-1 slds-medium-size_1-of-2 slds-large-size_1-of-3">
+                                    <article class="slds-card slds-m-bottom_small">
+                                        <div class="slds-card__header slds-grid">
+                                            <header class="slds-media slds-media_center slds-has-flexi-truncate">
+                                                <div class="slds-media__body">
+                                                    <h2 class="slds-card__header-title">
+                                                        <span class="slds-truncate" title={record.DriverName}>{record.DriverName}</span>
+                                                    </h2>
+                                                </div>
+                                            </header>
+                                        </div>
+                                        <div class="slds-card__body slds-card__body_inner">
+                                            <!--
+                                            <template for:each={record.fields} for:item="field">
+                                                <dl key={field.apiName} class="slds-list_horizontal slds-wrap slds-m-bottom_x-small">
+                                                    <dt class="slds-item_label slds-text-color_weak slds-truncate" title={field.label}>
+                                                        {field.label}:
+                                                    </dt>
+                                                    <dd class="slds-item_detail slds-truncate" title={field.value}>
+                                                        {field.value}
+                                                    </dd>
+                                                </dl>
+                                            </template>
+                                        -->
+                                            <dl class="slds-list_horizontal slds-wrap slds-m-bottom_x-small">
+                                                <dt class="slds-item_label slds-text-color_weak slds-truncate" title="CDL">
+                                                    CDL:
+                                                </dt>
+                                                <dd class="slds-item_detail slds-truncate" title={record.DriverLicenseNumber}>
+                                                    {record.DriverCDL}
+                                                </dd>
+                                            </dl>
+                                        </div>
+                                    </article>
+                                </div>
+                            </template>
+                        </div>
+                    </div>
+                </div>
+            </template>
+        </div>
+    </lightning-card>
+</template>

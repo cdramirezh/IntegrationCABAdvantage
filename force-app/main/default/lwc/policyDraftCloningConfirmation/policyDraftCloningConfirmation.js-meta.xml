@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<LightningComponentBundle xmlns="http://soap.sforce.com/2006/04/metadata">
+    <apiVersion>58.0</apiVersion>
+    <description>Component to display multiple record types from Flow Get Records elements</description>
+    <isExposed>true</isExposed>
+    <targets>
+        <target>lightning__FlowScreen</target>
+    </targets>
+    <targetConfigs>
+        <targetConfig targets="lightning__FlowScreen">
+            <property name="coverageRecords" type="@salesforce/schema/Coverage__c[]" label="Coverage Records" 
+                      description="Collection of Coverage__c records from Get Records element"/>
+            <property name="vehicleRecords" type="@salesforce/schema/Vehicle__c[]" label="Vehicle Records" 
+                      description="Collection of Vehicle__c records from Get Records element"/>
+            <property name="policyVehicleRecords" type="@salesforce/schema/Policy_Vehicle__c[]" label="Policy Vehicle Records" 
+                      description="Collection of Policy_Vehicle__c records from Get Records element"/>
+            <property name="trailerRecords" type="@salesforce/schema/Trailer__c[]" label="Trailer Records" 
+                      description="Collection of Trailer__c records from Get Records element"/>
+            <property name="policyTrailerRecords" type="@salesforce/schema/Policy_Trailer__c[]" label="Policy Trailer Records"
+                      description="Collection of Policy_Trailer__c records from Get Records element"/>
+            <property name="driverRecords" type="@salesforce/schema/Driver__c[]" label="Driver Records" 
+                      description="Collection of Driver__c records from Get Records element"/>
+            <property name="policyDriverRecords" type="@salesforce/schema/Policy_Driver__c[]" label="Policy Driver Records"
+                      description="Collection of Policy_Driver__c records from Get Records element"/>
+            <property name="coverageLabel" type="String" label="Coverage Section Label" 
+                      description="Custom label for Coverage section" default="Coverage Records"/>
+            <property name="vehicleLabel" type="String" label="Vehicle Section Label" 
+                      description="Custom label for Vehicle section" default="Vehicle Records"/>
+            <property name="trailerLabel" type="String" label="Trailer Section Label" 
+                      description="Custom label for Trailer section" default="Trailer Records"/>
+            <property name="driverLabel" type="String" label="Driver Section Label" 
+                      description="Custom label for Driver section" default="Driver Records"/>
+            <property name="showCoverage" type="Boolean" label="Show Coverage Section" 
+                      description="Controls visibility of Coverage section" default="true"/>
+            <property name="showVehicle" type="Boolean" label="Show Vehicle Section" 
+                      description="Controls visibility of Vehicle section" default="true"/>
+            <property name="showTrailer" type="Boolean" label="Show Trailer Section" 
+                      description="Controls visibility of Trailer section" default="true"/>
+            <property name="showDriver" type="Boolean" label="Show Driver Section" 
+                      description="Controls visibility of Driver section" default="true"/>
+        </targetConfig>
+    </targetConfigs>
+</LightningComponentBundle>

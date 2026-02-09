@@ -1,0 +1,366 @@
+<template>
+    <lightning-card title="Endorsement Requests" icon-name="standard:contract">
+        <div slot="actions">
+            <lightning-button-icon 
+                icon-name="utility:refresh"
+                alternative-text="Refresh"
+                title="Refresh"
+                onclick={handleRefresh}>
+            </lightning-button-icon>
+        </div>
+
+        <div class="slds-card__body slds-card__body_inner">
+            <template if:true={isLoading}>
+                <lightning-spinner alternative-text="Loading..." size="small"></lightning-spinner>
+            </template>
+
+            <template if:true={error}>
+                <div class="slds-notify slds-notify_alert slds-alert_error">
+                    <span class="slds-assistive-text">Error</span>
+                    <h2>Error loading endorsement requests: {error.body.message}</h2>
+                </div>
+            </template>
+
+            <template if:false={isLoading}>
+                <template if:true={hasEndorsementRequests}>
+                    <template for:each={endorsementRequests} for:item="request">
+                        <div key={request.Id} class="slds-m-bottom_medium">
+                            <section class={request.sectionClass}>
+                                <div class="slds-section__title">
+                                    <button 
+                                        class="slds-button slds-section__title-action"
+                                        data-id={request.Id}
+                                        onclick={handleSectionToggle}
+                                        aria-expanded={request.isExpanded}>
+                                        <lightning-icon 
+                                            icon-name="utility:switch" 
+                                            size="x-small"
+                                            class="slds-section__title-action-icon slds-button__icon slds-button__icon_left">
+                                        </lightning-icon>
+                                        <span class="slds-truncate">
+                                            Endorsement {request.Subject} - Effective Date {request.formattedEffectiveDate}
+                                        </span>
+                                    </button>
+                                </div>
+                                
+                                <div class="slds-section__content">
+                                    <template if:true={request.isExpanded}>
+                                        <!-- Policies Section -->
+                                        <template if:true={request.hasPolicies}>
+                                            <div class="slds-m-bottom_medium">
+                                                <h3 class="slds-text-heading_small slds-text-color_weak slds-border-bottom">
+                                                    Policies to Modify
+                                                </h3>
+                                                <template for:each={request.policies} for:item="policy">
+                                                    <div key={policy.Id} class="slds-p-left_medium slds-p-top_x-small">
+                                                        {policy.Policy__r.Name}
+                                                    </div>
+                                                </template>
+                                            </div>
+                                        </template>
+
+                                        <!-- Coverages Section -->
+                                        <template if:true={request.hasCoverages}>
+                                            <div class="slds-m-bottom_medium">
+                                                <h3 class="slds-text-heading_small slds-text-color_weak slds-border-bottom">
+                                                    Coverages to Modify
+                                                </h3>
+                                                <template for:each={request.coverages} for:item="coverage">
+                                                    <div key={coverage.Id} class="slds-p-left_medium slds-p-top_x-small">
+                                                        <div class="slds-text-body_small">
+                                                            <strong>{coverage.Coverage__r.Coverage_Product__r.Name}</strong>
+                                                            <template if:true={coverage.New_Limit__c}>
+                                                                <br/>Old Limit: {coverage.Coverage__r.Limit__c} New Limit: {coverage.New_Limit__c}
+                                                            </template>
+                                                            <template if:true={coverage.New_Deductible__c}>
+                                                                <br/>Old Deductible: {coverage.Coverage__r.Deductible__c} New Deductible: {coverage.New_Deductible__c}
+                                                            </template>
+                                                        </div>
+                                                    </div>
+                                                </template>
+                                            </div>
+                                        </template>
+
+                                        <!-- Additions Section -->
+                                        <template if:true={request.hasAdditions}>
+                                            <div class="slds-m-bottom_medium">
+                                                <h2 class="slds-text-heading_medium slds-m-bottom_small">Additions</h2>
+                                                
+                                                <!-- Added Vehicles -->
+                                                <template if:true={request.addedVehicles}>
+                                                    <template if:true={request.addedVehicles.length}>
+                                                        <div class="slds-m-bottom_small">
+                                                            <h3 class="slds-text-heading_small slds-text-color_weak slds-border-bottom">
+                                                                VEHICLES
+                                                            </h3>
+                                                            <lightning-datatable
+                                                                key-field="Id"
+                                                                data={request.addedVehicles}
+                                                                columns={vehicleColumns}
+                                                                hide-checkbox-column="true">
+                                                            </lightning-datatable>
+                                                        </div>
+                                                    </template>
+                                                </template>
+
+                                                <!-- Added Trailers -->
+                                                <template if:true={request.addedTrailers}>
+                                                    <template if:true={request.addedTrailers.length}>
+                                                        <div class="slds-m-bottom_small">
+                                                            <h3 class="slds-text-heading_small slds-text-color_weak slds-border-bottom">
+                                                                TRAILERS
+                                                            </h3>
+                                                            <lightning-datatable
+                                                                key-field="Id"
+                                                                data={request.addedTrailers}
+                                                                columns={trailerColumns}
+                                                                hide-checkbox-column="true">
+                                                            </lightning-datatable>
+                                                        </div>
+                                                    </template>
+                                                </template>
+
+                                                <!-- Added Drivers -->
+                                                <template if:true={request.addedDrivers}>
+                                                    <template if:true={request.addedDrivers.length}>
+                                                        <div class="slds-m-bottom_small">
+                                                            <h3 class="slds-text-heading_small slds-text-color_weak slds-border-bottom">
+                                                                DRIVERS
+                                                            </h3>
+                                                            <lightning-datatable
+                                                                key-field="Id"
+                                                                data={request.addedDrivers}
+                                                                columns={driverColumns}
+                                                                hide-checkbox-column="true">
+                                                            </lightning-datatable>
+                                                        </div>
+                                                    </template>
+                                                </template>
+
+                                                <!-- Added Commodities -->
+                                                <template if:true={request.addedCommodities}>
+                                                    <template if:true={request.addedCommodities.length}>
+                                                        <div class="slds-m-bottom_small">
+                                                            <h3 class="slds-text-heading_small slds-text-color_weak slds-border-bottom">
+                                                                COMMODITIES
+                                                            </h3>
+                                                            <lightning-datatable
+                                                                key-field="Id"
+                                                                data={request.addedCommodities}
+                                                                columns={commodityColumns}
+                                                                hide-checkbox-column="true">
+                                                            </lightning-datatable>
+                                                        </div>
+                                                    </template>
+                                                </template>
+                                            </div>
+                                        </template>
+
+                                        <!-- Deletions Section -->
+                                        <template if:true={request.hasDeletions}>
+                                            <div class="slds-m-bottom_medium">
+                                                <h2 class="slds-text-heading_medium slds-m-bottom_small">Deletions</h2>
+                                                
+                                                <!-- Deleted Vehicles -->
+                                                <template if:true={request.deletedVehicles}>
+                                                    <template if:true={request.deletedVehicles.length}>
+                                                        <div class="slds-m-bottom_small">
+                                                            <h3 class="slds-text-heading_small slds-text-color_weak slds-border-bottom">
+                                                                VEHICLES
+                                                            </h3>
+                                                            <lightning-datatable
+                                                                key-field="Id"
+                                                                data={request.deletedVehicles}
+                                                                columns={vehicleColumns}
+                                                                hide-checkbox-column="true">
+                                                            </lightning-datatable>
+                                                        </div>
+                                                    </template>
+                                                </template>
+
+                                                <!-- Deleted Trailers -->
+                                                <template if:true={request.deletedTrailers}>
+                                                    <template if:true={request.deletedTrailers.length}>
+                                                        <div class="slds-m-bottom_small">
+                                                            <h3 class="slds-text-heading_small slds-text-color_weak slds-border-bottom">
+                                                                TRAILERS
+                                                            </h3>
+                                                            <lightning-datatable
+                                                                key-field="Id"
+                                                                data={request.deletedTrailers}
+                                                                columns={trailerColumns}
+                                                                hide-checkbox-column="true">
+                                                            </lightning-datatable>
+                                                        </div>
+                                                    </template>
+                                                </template>
+
+                                                <!-- Deleted Drivers -->
+                                                <template if:true={request.deletedDrivers}>
+                                                    <template if:true={request.deletedDrivers.length}>
+                                                        <div class="slds-m-bottom_small">
+                                                            <h3 class="slds-text-heading_small slds-text-color_weak slds-border-bottom">
+                                                                DRIVERS
+                                                            </h3>
+                                                            <lightning-datatable
+                                                                key-field="Id"
+                                                                data={request.deletedDrivers}
+                                                                columns={driverColumns}
+                                                                hide-checkbox-column="true">
+                                                            </lightning-datatable>
+                                                        </div>
+                                                    </template>
+                                                </template>
+
+                                                <!-- Deleted Commodities -->
+                                                <template if:true={request.deletedCommodities}>
+                                                    <template if:true={request.deletedCommodities.length}>
+                                                        <div class="slds-m-bottom_small">
+                                                            <h3 class="slds-text-heading_small slds-text-color_weak slds-border-bottom">
+                                                                COMMODITIES
+                                                            </h3>
+                                                            <lightning-datatable
+                                                                key-field="Id"
+                                                                data={request.deletedCommodities}
+                                                                columns={commodityColumns}
+                                                                hide-checkbox-column="true">
+                                                            </lightning-datatable>
+                                                        </div>
+                                                    </template>
+                                                </template>
+                                            </div>
+                                        </template>
+
+                                        <!-- Modifications Section -->
+                                        <template if:true={request.hasModifications}>
+                                            <div class="slds-m-bottom_medium">
+                                                <h2 class="slds-text-heading_medium slds-m-bottom_small">Modifications</h2>
+                                                
+                                                <!-- Modified Vehicles -->
+                                                <template if:true={request.modifiedVehicles}>
+                                                    <template if:true={request.modifiedVehicles.length}>
+                                                        <div class="slds-m-bottom_small">
+                                                            <h3 class="slds-text-heading_small slds-text-color_weak slds-border-bottom">
+                                                                Vehicles
+                                                            </h3>
+                                                            <template for:each={request.modifiedVehicles} for:item="vehicle">
+                                                                <div key={vehicle.Id} class="slds-p-left_medium slds-p-top_x-small">
+                                                                    <div class="slds-text-body_small">
+                                                                        <template if:true={vehicle.Vehicle__r}>
+                                                                            <strong>{vehicle.Vehicle__r.Name}</strong>
+                                                                            <template if:true={vehicle.New_Value__c}>
+                                                                                <br/>Old Value: {vehicle.Vehicle__r.Value__c} → New Value: {vehicle.New_Value__c}
+                                                                            </template>
+                                                                            <template if:true={vehicle.New_VIN__c}>
+                                                                                <br/>Old VIN: {vehicle.Vehicle__r.Name} → New VIN: {vehicle.New_VIN__c}
+                                                                            </template>
+                                                                            <template if:true={vehicle.New_Weight__c}>
+                                                                                <br/>Old Weight: {vehicle.Vehicle__r.Weight__c} → New Weight: {vehicle.New_Weight__c}
+                                                                            </template>
+                                                                        </template>
+                                                                    </div>
+                                                                </div>
+                                                            </template>
+                                                        </div>
+                                                    </template>
+                                                </template>
+                                                
+
+                                                <!-- Modified Trailers -->
+                                                <template if:true={request.modifiedTrailers}>
+                                                    <template if:true={request.modifiedTrailers.length}>
+                                                        <div class="slds-m-bottom_small">
+                                                            <h3 class="slds-text-heading_small slds-text-color_weak slds-border-bottom">
+                                                                Trailers
+                                                            </h3>
+                                                            <template for:each={request.modifiedTrailers} for:item="trailer">
+                                                                <div key={trailer.Id} class="slds-p-left_medium slds-p-top_x-small">
+                                                                    <div class="slds-text-body_small">
+                                                                        <strong>{trailer.Trailer__r.Name}</strong>
+                                                                        <template if:true={trailer.New_Value__c}>
+                                                                            <br/>Old Value: {trailer.Trailer__r.Value__c} → New Value: {trailer.New_Value__c}
+                                                                        </template>
+                                                                        <template if:true={trailer.New_VIN__c}>
+                                                                            <br/>Old VIN: {trailer.Trailer__r.Name} → New VIN: {trailer.New_VIN__c}
+                                                                        </template>
+                                                                        <template if:true={trailer.New_Weight__c}>
+                                                                            <br/>Old Weight: {trailer.Trailer__r.Weight__c} → New Weight: {trailer.New_Weight__c}
+                                                                        </template>
+                                                                    </div>
+                                                                </div>
+                                                            </template>
+                                                        </div>
+                                                    </template>
+                                                </template>
+                                                
+
+                                                <!-- Modified Drivers -->
+                                                <template if:true={request.modifiedDrivers}>
+                                                    <template if:true={request.modifiedDrivers.length}>
+                                                        <div class="slds-m-bottom_small">
+                                                            <h3 class="slds-text-heading_small slds-text-color_weak slds-border-bottom">
+                                                                Drivers
+                                                            </h3>
+                                                            <template for:each={request.modifiedDrivers} for:item="driver">
+                                                                <div key={driver.Id} class="slds-p-left_medium slds-p-top_x-small">
+                                                                    <div class="slds-text-body_small">
+                                                                        <strong>{driver.Driver__r.Name}</strong>
+                                                                        <template if:true={driver.New_CDL__c}>
+                                                                            <br/>CDL: {driver.Driver__r.CDL__c} → {driver.New_CDL__c}
+                                                                        </template>
+                                                                    </div>
+                                                                </div>
+                                                            </template>
+                                                        </div>
+                                                    </template>
+                                                </template>
+                                                
+
+                                                <!-- Modified Commodities -->
+                                                <template if:true={request.modifiedCommodities}>
+                                                    <template if:true={request.modifiedCommodities.length}>
+                                                        <div class="slds-m-bottom_small">
+                                                            <h3 class="slds-text-heading_small slds-text-color_weak slds-border-bottom">
+                                                                Commodities
+                                                            </h3>
+                                                            <template for:each={request.modifiedCommodities} for:item="commodity">
+                                                                <div key={commodity.Id} class="slds-p-left_medium slds-p-top_x-small">
+                                                                    <div class="slds-text-body_small">
+                                                                        <strong>{commodity.Commodity__r.Name}</strong>
+                                                                        <template if:true={commodity.New_Percent__c}>
+                                                                            <br/>Percent: {commodity.Commodity__r.Percent__c} → {commodity.New_Percent__c}
+                                                                        </template>
+                                                                    </div>
+                                                                </div>
+                                                            </template>
+                                                        </div>
+                                                    </template>
+                                                </template>
+                                                
+                                            </div>
+                                        </template>
+
+                                        <!-- Other Request Section -->
+                                        <template if:true={request.hasOtherRequest}>
+                                            <div class="slds-m-bottom_medium">
+                                                <h2 class="slds-text-heading_medium slds-m-bottom_small">Other Request</h2>
+                                                <p class="slds-text-body_regular">{request.OtherRequest}</p>
+                                            </div>
+                                        </template>
+                                    </template>
+                                </div>
+                            </section>
+                        </div>
+                    </template>
+                </template>
+                
+                <template if:false={hasEndorsementRequests}>
+                    <div class="slds-text-align_center slds-p-around_medium">
+                        <lightning-icon icon-name="custom:custom63" size="large" class="slds-m-bottom_small"></lightning-icon>
+                        <p class="slds-text-body_regular slds-text-color_weak">No endorsement requests found for this opportunity.</p>
+                    </div>
+                </template>
+            </template>
+        </div>
+    </lightning-card>
+</template>

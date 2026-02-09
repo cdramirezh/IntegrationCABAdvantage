@@ -1,0 +1,39 @@
+.slds-card__body {
+    padding: 0;
+}
+
+.slds-card__body_inner {
+    padding: 1rem;
+}
+
+lightning-datatable {
+    border: 1px solid #d8dde6;
+    border-radius: 0.25rem;
+}
+
+.slds-tabs__content {
+    border: none;
+    padding: 0;
+}
+
+.slds-button-group .slds-button {
+    border-radius: 0;
+}
+
+.slds-button-group .slds-button:first-child {
+    border-top-left-radius: 0.25rem;
+    border-bottom-left-radius: 0.25rem;
+}
+
+.slds-button-group .slds-button:last-child {
+    border-top-right-radius: 0.25rem;
+    border-bottom-right-radius: 0.25rem;
+}
+
+.slds-illustration {
+    text-align: center;
+}
+
+.slds-notify_alert {
+    margin-bottom: 1rem;
+}

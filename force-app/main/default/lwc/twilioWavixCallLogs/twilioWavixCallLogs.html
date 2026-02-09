@@ -1,0 +1,55 @@
+<template>
+    <lightning-card title="Lead Call Logs" icon-name="standard:logging">
+        <div if:true={callLogs.length}>
+            <table class="slds-table slds-table_bordered slds-table_cell-buffer slds-table_fixed-layout">
+                <thead>
+                    <tr class="slds-line-height_reset">
+                        <th scope="col">
+                            <div class="slds-truncate" title="Call Date">Call Date</div>
+                        </th>
+                        <th scope="col">
+                            <div class="slds-truncate" title="From">From</div>
+                        </th>
+                        <!--
+                        <th scope="col">
+                            <div class="slds-truncate" title="To">To</div>
+                        </th>
+                        <th scope="col">
+                            <div class="slds-truncate" title="Direction">Direction</div>
+                        </th>
+                        <th scope="col">
+                            <div class="slds-truncate" title="Call SID">Call SID</div>
+                        </th>
+                        -->
+                    </tr>
+                </thead>
+                <tbody>
+                    <template for:each={callLogs} for:item="log">
+                        <tr key={log.callSid}>
+                            <td>
+                                <div class="slds-truncate" title={log.callDate}>{log.callDate}</div>
+                            </td>
+                            <td>
+                                <div class="slds-truncate" title={log.producerName}>{log.producerName}</div>
+                            </td>
+                            <!--
+                            <td>
+                                <div class="slds-truncate" title={log.toNumber}>{log.toNumber}</div>
+                            </td>
+                            <td>
+                                <div class="slds-truncate" title={log.direction}>{log.direction}</div>
+                            </td>
+                            <td>
+                                <div class="slds-truncate" title={log.callSid}>{log.callSid}</div>
+                            </td>
+                            -->
+                        </tr>
+                    </template>
+                </tbody>
+            </table>
+        </div>
+        <div if:true={noLogs}>
+            <p>No call logs found for this lead.</p>
+        </div>
+    </lightning-card>
+</template>

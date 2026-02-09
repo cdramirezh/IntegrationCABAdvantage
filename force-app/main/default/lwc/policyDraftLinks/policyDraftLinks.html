@@ -1,0 +1,28 @@
+<template>
+    <lightning-card title="Quick Links" icon-name="utility:link">
+        <template if:true={usdDot}>
+            <div class="table-container">
+                <table>
+                    <tr>
+                        <td><a href={cabLink} target="_blank">CAB</a></td>
+                        <td><a href={saferLink} target="_blank">SAFER</a></td>
+                        <td><a href={txdmvLink} target="_blank">TXDMV</a></td>
+                    </tr>
+                    <tr>
+                        <td><a href={sunbizlink} target="_blank">SUNBIZ</a></td>
+                        <td><a href={smslink} target="_blank">SMS</a></td>
+                        <td><a href={cadmvlink} target="_blank">CA DMV</a></td>
+                    </tr>
+                    <tr>
+                        <td><a href={vindecolink} target="_blank">VIN DECODER</a></td>
+                        <td><a href={vantagelink} target="_blank">VANTAGE</a></td>
+                        <td></td>
+                    </tr>
+                </table>
+            </div>
+        </template>
+        <template if:false={usdDot}>
+            <p>USDOT number is not available for this Policy Draft.</p>
+        </template>
+    </lightning-card>
+</template>

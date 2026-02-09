@@ -1,0 +1,23 @@
+<template>
+    <lightning-card title="Select Coverages for Endorsement" icon-name="standard:opportunity">
+        <template if:true={coverages.length}>
+        <div class="slds-p-around_medium">
+            <lightning-checkbox-group
+                name="coverages"
+                label="Available Coverages"
+                options={coverages}
+                value={selectedCoverages}
+                onchange={handleCoverageSelection}>
+            </lightning-checkbox-group>
+        </div>
+        </template>
+        <template if:false={coverages.length}>
+            <p>No coverages available.</p>
+        </template>
+        <lightning-button
+            variant="brand"
+            label="Create Endorsement Coverages"
+            onclick={handleCreateEndorsementCoverages}>
+        </lightning-button>
+    </lightning-card>
+</template>

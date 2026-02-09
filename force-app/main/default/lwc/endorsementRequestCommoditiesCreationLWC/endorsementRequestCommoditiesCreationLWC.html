@@ -1,0 +1,27 @@
+<template>
+    <lightning-card title="Commodity Endorsements">
+        <div class="slds-m-around_medium">
+            <lightning-combobox
+                label="Action"
+                value={action}
+                placeholder="Select Action"
+                options={actionOptions}
+                onchange={handleActionChange}>
+            </lightning-combobox>
+
+            <lightning-checkbox-group
+                label="Commodities"
+                options={commodityOptions}
+                value={selectedCommodities}
+                onchange={handleSelectionChange}>
+            </lightning-checkbox-group>
+
+            <lightning-button
+                label="Select Commodities for Delete/Modify"
+                onclick={handleSubmit}
+                class="slds-m-top_medium"
+                variant="brand">
+            </lightning-button>
+        </div>
+    </lightning-card>
+</template>

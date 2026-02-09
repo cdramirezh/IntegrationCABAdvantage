@@ -1,0 +1,179 @@
+<template>
+    <lightning-card title="Endorsement History" icon-name="custom:custom63">
+        <div slot="actions">
+                <lightning-button-group>
+                
+                <lightning-button 
+                    label={LatestLabel}
+                    icon-name="utility:task"
+                    icon-position="right"
+                    title="Latest Endorsements"
+                    value="latest"
+                    variant={showLatest}
+                    onclick={handleTabChange}>
+                    Latest ({latestCount})
+                </lightning-button>
+                <lightning-button 
+                    label={FullHistoryLabel}
+                    icon-name="utility:picklist_type"
+                    icon-position="right"
+                    title="Full History"
+                    value="history"
+                    variant={showHistory}
+                    onclick={handleTabChange}>
+                    Full History ({historyCount})
+                </lightning-button>
+
+            </lightning-button-group>
+        </div>
+
+        <div class="slds-card__body slds-card__body_inner">
+            <!-- Loading Spinner -->
+            <template if:true={isLoading}>
+                <div class="slds-align_absolute-center slds-p-around_large">
+                    <lightning-spinner alternative-text="Loading endorsement data..." size="medium"></lightning-spinner>
+                </div>
+            </template>
+
+            <!-- Error Message -->
+            <template if:true={error}>
+                <div class="slds-notify slds-notify_alert slds-theme_alert-texture slds-theme_error" role="alert">
+                    <span class="slds-assistive-text">Error</span>
+                    <h2>Error loading endorsement data: {error}</h2>
+                </div>
+            </template>            
+
+            <template if:true={showHistory}>
+                <div class="slds-tabs_default">
+                    <div class="slds-tabs__content" role="tabpanel">
+                        <template if:true={hasHistoryData}>
+                            <div class="slds-p-bottom_small">
+                                <h3 class="slds-text-heading_small slds-p-bottom_x-small">
+                                    Completed Endorsement Requests Full History ({historyCount} records)
+                                </h3>
+                                <p class="slds-text-body_small slds-text-color_weak">
+                                    This tables include all changes requested on completed Endorsement Request ordered by effective date (newest first)
+                                </p>
+                            </div>
+
+                            <!-- Vehicles -->
+                            <template if:true={vehicleHistory}>
+                                <h4 class="slds-text-title_bold slds-m-top_medium">Vehicle Endorsements Changes</h4>
+                                <lightning-datatable
+                                    key-field="id"
+                                    data={vehicleHistory}
+                                    columns={VehicleTrailerHistoryColumns}
+                                    hide-checkbox-column
+                                    show-row-number-column>
+                                </lightning-datatable>
+                            </template>
+
+                            <!-- Trailers -->
+                            <template if:true={trailerHistory}>
+                                <h4 class="slds-text-title_bold slds-m-top_medium">Trailer Endorsements</h4>
+                                <lightning-datatable
+                                    key-field="id"
+                                    data={trailerHistory}
+                                    columns={VehicleTrailerHistoryColumns}
+                                    hide-checkbox-column
+                                    show-row-number-column>
+                                </lightning-datatable>
+                            </template>
+
+                            <!-- Drivers -->
+                            <template if:true={driverHistory}>
+                                <h4 class="slds-text-title_bold slds-m-top_medium">Driver Endorsements</h4>
+                                <lightning-datatable
+                                    key-field="id"
+                                    data={driverHistory}
+                                    columns={DriverHistoryColumns}
+                                    hide-checkbox-column
+                                    show-row-number-column>
+                                </lightning-datatable>
+                            </template>
+
+                        </template>
+                        <template if:false={hasHistoryData}>
+                            <div class="slds-align_absolute-center slds-p-around_large">
+                                <div class="slds-illustration slds-illustration_small">
+                                    <div class="slds-text-color_weak">
+                                        <h3 class="slds-text-heading_medium">No endorsement history found</h3>
+                                        <p class="slds-text-body_regular">There are no endorsement records for this policy.</p>
+                                    </div>
+                                </div>
+                            </div>
+                        </template>
+                    </div>
+                </div>
+            </template>
+           
+        <template if:true={showLatest}>
+            <div class="slds-tabs_default">
+                <div class="slds-tabs__content" role="tabpanel">
+                    <template if:true={hasLatestData}>
+                        <div class="slds-p-bottom_small">
+                            <h3 class="slds-text-heading_small slds-p-bottom_x-small">
+                                Final effectively Endorsed Assets ({latestCount} unique records)
+                            </h3>
+                            <p class="slds-text-body_small slds-text-color_weak">
+                                This list include the final list of assets that were effectively Endorsed (Endorsement Request Status is Completed) to the Policy for each unique Vehicle (by VIN), Trailer (by VIN), and Driver (by CDL)
+                            </p>
+                        </div>
+
+                        <!-- Vehicles -->
+                        <template if:true={vehicleLatest}>
+                            <h4 class="slds-text-title_bold slds-m-top_medium">Vehicle Endorsements</h4>
+                            <lightning-datatable
+                                key-field="id"
+                                data={vehicleLatest}
+                                columns={VehicleTrailerHistoryColumns}
+                                hide-checkbox-column
+                                show-row-number-column>
+                            </lightning-datatable>
+                        </template>
+
+                        <!-- Trailers -->
+                        <template if:true={trailerLatest}>
+                            <h4 class="slds-text-title_bold slds-m-top_medium">Trailer Endorsements</h4>
+                            <lightning-datatable
+                                key-field="id"
+                                data={trailerLatest}
+                                columns={VehicleTrailerHistoryColumns}
+                                hide-checkbox-column
+                                show-row-number-column>
+                            </lightning-datatable>
+                        </template>
+
+                        <!-- Drivers -->
+                        <template if:true={driverLatest}>
+                            <h4 class="slds-text-title_bold slds-m-top_medium">Driver Endorsements</h4>
+                            <lightning-datatable
+                                key-field="id"
+                                data={driverLatest}
+                                columns={DriverHistoryColumns}
+                                hide-checkbox-column
+                                show-row-number-column>
+                            </lightning-datatable>
+                        </template>
+
+                    </template>
+                    <template if:false={hasLatestData}>
+                        <div class="slds-align_absolute-center slds-p-around_large">
+                            <div class="slds-illustration slds-illustration_small">
+                                <div class="slds-text-color_weak">
+                                    <h3 class="slds-text-heading_medium">No latest endorsements found</h3>
+                                    <p class="slds-text-body_regular">There are no unique endorsement records for this policy.</p>
+                                </div>
+                            </div>
+                        </div>
+                    </template>
+                </div>
+            </div>
+        </template>
+
+
+
+
+        </div>
+    </lightning-card>
+</template>

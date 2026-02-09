@@ -1,0 +1,196 @@
+<template>
+    <lightning-card title="Endorsement Summary" icon-name="custom:custom63">
+        <div class="slds-p-around_medium">
+            <template if:true={summaryData}>
+                <template if:true={summaryData.policies}>
+                    <h2 class="slds-text-heading_medium slds-m-bottom_small">Policies to Modify</h2>
+                    <template for:each={summaryData.policies} for:item="policy">
+                        <p key={policy.Id} class="slds-m-left_large">{policy.Policy__r.Name}</p>
+                    </template>
+                </template>
+
+                <!--
+                <template if:true={summaryData.coverages}>
+                    <h2 class="slds-text-heading_medium slds-m-bottom_small">Coverages Involved</h2>
+                    <template for:each={summaryData.coverages} for:item="coverage">
+                        <p key={coverage.Id} class="slds-m-left_large">{coverage.Coverage__r.Coverage_Product__r.Name}</p>
+                    </template>
+                </template>
+            -->
+
+                <template if:true={summaryData.coverages}>
+                    <h2 class="slds-text-heading_medium slds-m-bottom_small">Coverages Involved</h2>
+                    <template for:each={summaryData.coverages} for:item="coverage">
+                        <div key={coverage.Id} class="slds-m-left_large slds-m-bottom_medium">
+                            <p class="slds-text-body_regular">{coverage.Coverage__r.Coverage_Product__r.Name}</p>
+                            
+                            <template if:true={coverage.New_Limit__c}>
+                                <p class="slds-text-body_small slds-m-left_medium">
+                                    <strong>Limit:</strong> {coverage.Coverage__r.Limit__c} → {coverage.New_Limit__c}
+                                </p>
+                            </template>
+                
+                            <template if:true={coverage.New_Deductible__c}>
+                                <p class="slds-text-body_small slds-m-left_medium">
+                                    <strong>Deductible:</strong> {coverage.Coverage__r.Deductible__c} → {coverage.New_Deductible__c}
+                                </p>
+                            </template>
+                        </div>
+                    </template>
+                </template>
+            
+            
+
+                <h2 class="slds-text-heading_medium slds-m-top_medium slds-m-bottom_small">Additions</h2>
+                
+                <template if:true={summaryData.vehicles.Add}>
+                    <h3 class="slds-text-heading_small slds-m-bottom_xx-small">Vehicles</h3>
+                    <template for:each={summaryData.vehicles.Add} for:item="vehicle">
+                        <template if:true={vehicle.Vehicle__c}>
+                            <p key={vehicle.Id} class="slds-m-left_large">{vehicle.Vehicle__r.Name}</p>
+                        </template>
+                    </template>
+                </template>
+
+                <template if:true={summaryData.trailers.Add}>
+                    <h3 class="slds-text-heading_small slds-m-bottom_xx-small">Trailers</h3>
+                    <template for:each={summaryData.trailers.Add} for:item="trailer">
+                        <template if:true={trailer.Trailer__c}>
+                            <p key={trailer.Id} class="slds-m-left_large">{trailer.Trailer__r.Name}</p>
+                        </template>
+                    </template>
+                </template>
+
+                <template if:true={summaryData.drivers.Add}>
+                    <h3 class="slds-text-heading_small slds-m-bottom_xx-small">Drivers</h3>
+                    <template for:each={summaryData.drivers.Add} for:item="driver">
+                        <template if:true={driver.Driver__c}>
+                            <p key={driver.Id} class="slds-m-left_large">{driver.Driver__r.Name}</p>
+                        </template>
+                    </template>
+                </template>
+
+                <h2 class="slds-text-heading_medium slds-m-top_medium slds-m-bottom_small">Deletions</h2>
+                
+                <template if:true={summaryData.vehicles.Delete}>
+                    <h3 class="slds-text-heading_small slds-m-bottom_xx-small">Vehicles</h3>
+                    <template for:each={summaryData.vehicles.Delete} for:item="vehicle">
+                        <template if:true={vehicle.Vehicle__c}>
+                            <p key={vehicle.Id} class="slds-m-left_large">{vehicle.Vehicle__r.Name}</p>
+                        </template>
+                    </template>
+                </template>
+
+                <template if:true={summaryData.trailers.Delete}>
+                    <h3 class="slds-text-heading_small slds-m-bottom_xx-small">Trailers</h3>
+                    <template for:each={summaryData.trailers.Delete} for:item="trailer">
+                        <template if:true={trailer.Trailer__c}>
+                            <p key={trailer.Id} class="slds-m-left_large">{trailer.Trailer__r.Name}</p>
+                        </template>
+                    </template>
+                </template>
+
+                <template if:true={summaryData.drivers.Delete}>
+                    <h3 class="slds-text-heading_small slds-m-bottom_xx-small">Drivers</h3>
+                    <template for:each={summaryData.drivers.Delete} for:item="driver">
+                        <template if:true={driver.Driver__c}>
+                            <p key={driver.Id} class="slds-m-left_large">{driver.Driver__r.Name}</p>
+                        </template>
+                    </template>
+                </template>
+
+                <h2 class="slds-text-heading_medium slds-m-top_medium slds-m-bottom_small">Modifications</h2>
+                
+                <!--
+                <template if:true={summaryData.vehicles.Modify}>
+                    <h3 class="slds-text-heading_small slds-m-bottom_xx-small">Vehicles</h3>
+                    <template for:each={summaryData.vehicles.Modify} for:item="vehicle">
+                        <template if:true={vehicle.Vehicle__c}>
+                            <p key={vehicle.Id} class="slds-m-left_large">{vehicle.Vehicle__r.Name}</p>
+                        </template>
+                    </template>
+                </template>
+            -->
+
+                <template if:true={summaryData.vehicles.Modify}>
+                    <h3 class="slds-text-heading_small slds-m-bottom_xx-small">Vehicles</h3>
+                    <template for:each={summaryData.vehicles.Modify} for:item="vehicle">
+                        <template if:true={vehicle.Vehicle__c}>
+                            <div key={vehicle.Id} class="slds-m-left_large slds-m-bottom_medium">
+                                <p>{vehicle.Vehicle__r.Name}</p>
+                
+                                <template if:true={vehicle.New_Value__c}>
+                                    <p class="slds-text-body_small slds-m-left_medium">
+                                        <strong>Value:</strong> {vehicle.Vehicle__r.Value__c} → {vehicle.New_Value__c}
+                                    </p>
+                                </template>
+                
+                                <template if:true={vehicle.New_VIN__c}>
+                                    <p class="slds-text-body_small slds-m-left_medium">
+                                        <strong>VIN:</strong> {vehicle.Vehicle__r.Name} → {vehicle.New_VIN__c}
+                                    </p>
+                                </template>
+                
+                                <template if:true={vehicle.New_Weight__c}>
+                                    <p class="slds-text-body_small slds-m-left_medium">
+                                        <strong>Weight:</strong> {vehicle.Vehicle__r.Weight__c} → {vehicle.New_Weight__c}
+                                    </p>
+                                </template>
+                            </div>
+                        </template>
+                    </template>
+                </template>
+            
+                <!--
+                <template if:true={summaryData.trailers.Modify}>
+                    <h3 class="slds-text-heading_small slds-m-bottom_xx-small">Trailers</h3>
+                    <template for:each={summaryData.trailers.Modify} for:item="trailer">
+                        <template if:true={trailer.Trailer__c}>
+                            <p key={trailer.Id} class="slds-m-left_large">{trailer.Trailer__r.Name}</p>
+                        </template>
+                    </template>
+                </template>
+            -->
+                <template if:true={summaryData.trailers.Modify}>
+                    <h3 class="slds-text-heading_small slds-m-bottom_xx-small">Trailers</h3>
+                    <template for:each={summaryData.trailers.Modify} for:item="trailer">
+                        <template if:true={trailer.Trailer__c}>
+                            <div key={trailer.Id} class="slds-m-left_large slds-m-bottom_medium">
+                                <p>{trailer.Trailer__r.Name}</p>
+                
+                                <template if:true={trailer.New_Value__c}>
+                                    <p class="slds-text-body_small slds-m-left_medium">
+                                        <strong>Value:</strong> {trailer.Trailer__r.Value__c} → {trailer.New_Value__c}
+                                    </p>
+                                </template>
+                
+                                <template if:true={trailer.New_VIN__c}>
+                                    <p class="slds-text-body_small slds-m-left_medium">
+                                        <strong>VIN:</strong> {trailer.Trailer__r.Name} → {trailer.New_VIN__c}
+                                    </p>
+                                </template>
+                
+                                <template if:true={trailer.New_Weight__c}>
+                                    <p class="slds-text-body_small slds-m-left_medium">
+                                        <strong>Weight:</strong> {trailer.Trailer__r.Weight__c} → {trailer.New_Weight__c}
+                                    </p>
+                                </template>
+                            </div>
+                        </template>
+                    </template>
+                </template>
+
+                <template if:true={summaryData.drivers.Modify}>
+                    <h3 class="slds-text-heading_small slds-m-bottom_xx-small">Drivers</h3>
+                    <template for:each={summaryData.drivers.Modify} for:item="driver">
+                        <template if:true={driver.Driver__c}>
+                            <p key={driver.Id} class="slds-m-left_large">{driver.Driver__r.Name}</p>
+                        </template>
+                    </template>
+                </template>
+
+                
+            </template>
+        </div>
+    </lightning-card>
+</template>

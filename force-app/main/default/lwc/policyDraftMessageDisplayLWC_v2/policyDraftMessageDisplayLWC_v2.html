@@ -1,0 +1,22 @@
+<template>
+    <lightning-card title="Chat Messages" icon-name="utility:chat">
+        <div class="slds-p-around_small chat-container">
+            <template if:true={messages}>
+                <template for:each={messages} for:item="message">
+                    <div key={message.Id} class="message-row">
+                        <div class={message.cssClass}>
+                            <p><strong>From: </strong><strong>{message.senderName}</strong></p>
+                            <p class="slds-text-color_weak">{message.createdDate}</p>
+                            <p><strong>MGA Quote:</strong> {message.mgaQuoteName}</p>
+                            <p><strong>Insurance Company:</strong> {message.insuranceCompanyName}</p>
+                            <lightning-formatted-rich-text value={message.body}></lightning-formatted-rich-text>                            
+                        </div>
+                    </div>
+                </template>
+            </template>
+            <template if:false={messages}>
+                <p>No messages available.</p>
+            </template>
+        </div>
+    </lightning-card>
+</template>

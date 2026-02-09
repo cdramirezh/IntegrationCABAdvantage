@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<LightningComponentBundle xmlns="http://soap.sforce.com/2006/04/metadata"
+                          fqn="chatComponent">
+    <apiVersion>61.0</apiVersion> <!-- Ensure the correct API version -->
+    <isExposed>true</isExposed> <!-- Make the component available in the Lightning App Builder -->
+    <targets>
+        <!-- Allow this component to be added to Lightning record pages -->
+        <target>lightning__RecordPage</target>          
+        <target>lightning__FlowScreen</target>    
+    </targets>
+    <targetConfigs>
+        <!-- Configure properties based on the type of record page -->
+        <targetConfig targets="lightning__RecordPage">
+            <objects>
+                <object>Finance_Request__c</object> <!-- Makes the component available for all objects -->
+            </objects>
+        </targetConfig>
+        <targetConfig targets="lightning__FlowScreen">
+            <property name="recordId" type="String" label="Finance Request Record ID" description="The Finance Request record ID." />
+        </targetConfig>
+    </targetConfigs>
+</LightningComponentBundle>

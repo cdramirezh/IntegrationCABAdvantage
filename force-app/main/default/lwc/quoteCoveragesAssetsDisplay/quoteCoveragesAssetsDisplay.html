@@ -1,0 +1,34 @@
+<template>
+    <lightning-card title="Vehicles and Coverages" icon-name="custom:custom63">
+        <template if:true={vehicleCoverageMap}>
+            <lightning-datatable
+                key-field="vehicleName"
+                data={vehicleCoverageMap}
+                columns={vehicleColumns}>
+            </lightning-datatable>
+        </template>
+    </lightning-card>
+    <lightning-card title="Trailers and Coverages" icon-name="custom:custom63">
+        <template if:true={trailerCoverageMap}>
+            <lightning-datatable
+                key-field="trailerName"
+                data={trailerCoverageMap}
+                columns={trailerColumns}>
+            </lightning-datatable>
+        </template>
+    </lightning-card>
+    <lightning-card title="Drivers and Coverages" icon-name="custom:custom63">
+        <template if:true={driverCoverageMap}>
+            <lightning-datatable
+                key-field="driverName"
+                data={driverCoverageMap}
+                columns={driverColumns}>
+            </lightning-datatable>
+        </template>
+        <template if:true={error}>
+            <div class="slds-text-color_error slds-p-around_medium">
+                <p>Error: {error.body.message}</p>
+            </div>
+        </template>
+    </lightning-card>
+</template>

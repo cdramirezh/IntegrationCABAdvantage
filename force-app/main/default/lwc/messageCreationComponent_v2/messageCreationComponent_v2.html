@@ -1,0 +1,30 @@
+<template>
+    <lightning-card title="New Message" icon-name="utility:chat">
+        <div class="slds-p-around_small">
+            <!-- Contact Search for Sender 
+            <lightning-input type="text" label="Search Sender" placeholder="Search Contacts" value={contactSearch}
+                             onchange={handleContactSearch}></lightning-input>
+            <template if:true={contactOptions}>
+                <lightning-combobox label="Select Sender" options={contactOptions}
+                                    onchange={handleContactSelect}></lightning-combobox>
+            </template>
+            -->
+
+            <!-- Message Creation Form -->
+            <lightning-record-edit-form object-api-name="Message__c" onsuccess={handleSuccess}>
+                
+                <!-- Chat ID input (Hidden) -->
+                <lightning-input-field field-name="Chat__c" value={chatId} class="slds-hide"></lightning-input-field>
+                
+                <!-- Sender Field (Lookup) -->
+                <lightning-input-field field-name="Sender__c" value={selectedContactId}></lightning-input-field>
+
+                <!-- Message Body Input -->
+                <lightning-input-field field-name="Body__c"></lightning-input-field>
+
+                <!-- Send Button -->
+                <lightning-button variant="brand" label="Send Message" type="submit"></lightning-button>
+            </lightning-record-edit-form>
+        </div>
+    </lightning-card>
+</template>

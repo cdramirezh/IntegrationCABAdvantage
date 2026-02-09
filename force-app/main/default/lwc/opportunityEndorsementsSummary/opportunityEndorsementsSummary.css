@@ -1,0 +1,79 @@
+.section-header {
+    background-color: #f3f2f2;
+    border-radius: 4px;
+    padding: 0.5rem;
+    margin-bottom: 0.5rem;
+}
+
+.section-title {
+    font-size: 1.125rem;
+    font-weight: 600;
+    color: #080707;
+}
+
+.modification-item {
+    background-color: #fafaf9;
+    border-left: 4px solid #0176d3;
+    padding: 0.75rem;
+    margin-bottom: 0.5rem;
+    border-radius: 4px;
+}
+
+.change-text {
+    color: #0176d3;
+    font-weight: 500;
+}
+
+.no-data-container {
+    text-align: center;
+    padding: 2rem;
+    color: #706e6b;
+}
+
+.endorsement-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 0.5rem 0;
+    border-bottom: 1px solid #dddbda;
+    margin-bottom: 1rem;
+}
+
+.endorsement-title {
+    font-size: 1.25rem;
+    font-weight: 600;
+    color: #080707;
+}
+
+.effective-date {
+    font-size: 0.875rem;
+    color: #706e6b;
+}
+
+.data-section {
+    margin-bottom: 1.5rem;
+}
+
+.section-divider {
+    border-bottom: 2px solid #cfc426;
+    padding-bottom: 0.25rem;
+    margin-bottom: 1rem;
+}
+
+.policy-item, .coverage-item {
+    padding: 0.5rem 1rem;
+    background-color: #fafaf9;
+    margin-bottom: 0.5rem;
+    border-radius: 4px;
+}
+
+.old-new-text {
+    font-size: 0.875rem;
+    color: #444;
+    margin-top: 0.25rem;
+}
+
+.arrow {
+    color: #0176d3;
+    font-weight: bold;
+}

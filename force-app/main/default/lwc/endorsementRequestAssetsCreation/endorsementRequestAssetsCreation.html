@@ -1,0 +1,48 @@
+<template>
+    <lightning-card title="Endorsement Records">
+        <div class="slds-m-around_medium">
+            <!-- Action Combobox -->
+            <lightning-combobox
+                label="Action"
+                value={action}
+                placeholder="Select an Action"
+                options={actionOptions}
+                onchange={handleActionChange}>
+            </lightning-combobox>
+
+            <!-- Vehicles Checkbox Group -->
+            <lightning-checkbox-group
+                label="Vehicles"
+                options={vehicles}
+                value={selectedVehicles}
+                onchange={handleVehicleSelection}>
+            </lightning-checkbox-group>
+
+            <!-- Trailers Checkbox Group -->
+            <lightning-checkbox-group
+                label="Trailers"
+                options={trailers}
+                value={selectedTrailers}
+                onchange={handleTrailerSelection}>
+            </lightning-checkbox-group>
+
+            <!-- Drivers Checkbox Group -->
+            <lightning-checkbox-group
+                label="Drivers"
+                options={drivers}
+                value={selectedDrivers}
+                onchange={handleDriverSelection}>
+            </lightning-checkbox-group>
+        </div>
+        <div class="slds-m-around_medium">
+
+            <!-- Create Endorsement Button -->
+            <lightning-button
+                label="Select Assets for Delete/Modify"
+                onclick={handleCreateEndorsementRecords}
+                class="slds-m-top_medium"
+                variant="brand">
+            </lightning-button>
+        </div>
+    </lightning-card>
+</template>

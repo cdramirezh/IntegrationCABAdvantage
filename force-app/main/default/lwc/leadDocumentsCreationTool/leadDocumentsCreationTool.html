@@ -1,0 +1,50 @@
+<template>
+    <lightning-card title="Create Document">
+        <div class="slds-p-around_medium">
+            <!-- Document Name Input -->
+            <lightning-input 
+                label="Document Name" 
+                value={documentName} 
+                onchange={handleNameChange}>
+            </lightning-input>
+
+            <!-- Documents Package Picklist -->
+            <lightning-combobox 
+                label="Select Document Package" 
+                options={documentPackages} 
+                value={selectedPackageId} 
+                placeholder="Select Package"
+                onchange={handlePackageChange}>
+            </lightning-combobox>
+
+            <!-- Document Type Picklist -->
+            <lightning-combobox 
+                label="Select Document Type" 
+                options={documentTypes} 
+                value={selectedType} 
+                placeholder="Select Type"
+                onchange={handleTypeChange}>
+            </lightning-combobox>
+
+            <div class="slds-p-top_x-small">
+            <!-- Create Document Button -->
+            <lightning-button 
+                label="Create Document" 
+                variant="brand" 
+                onclick={handleCreateDocument} 
+                class="slds-m-top_small">
+            </lightning-button>
+            </div>
+        </div>
+
+        <!-- File Upload Component -->
+        <template if:true={documentId}>
+            <lightning-file-upload 
+                label="Upload Attachment" 
+                record-id={documentId} 
+                accepted-formats=".pdf,.png,.jpg"
+                onuploadfinished={handleUploadFinished}>
+            </lightning-file-upload>
+        </template>
+    </lightning-card>
+</template>

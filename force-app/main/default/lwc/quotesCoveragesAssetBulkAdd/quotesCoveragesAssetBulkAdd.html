@@ -1,0 +1,64 @@
+<template>
+    <lightning-card title="Coverage Assignment" icon-name="custom:custom63">
+        <div class="slds-p-around_medium">
+            <!-- Vehicle Dual Listbox -->
+            <lightning-dual-listbox
+                name="vehicles"
+                label="Select Vehicles"
+                source-label="Available Vehicles"
+                selected-label="Selected Vehicles"
+                field-level-help="Select vehicles related to the Lead"
+                options={vehicleOptions}
+                value={selectedVehicles}
+                onchange={handleVehicleChange}>
+            </lightning-dual-listbox>
+        </div>
+
+        <div class="slds-p-around_medium">
+            <!-- Trailer Dual Listbox -->
+            <lightning-dual-listbox
+                name="trailers"
+                label="Select Trailers"
+                source-label="Available Trailers"
+                selected-label="Selected Trailers"
+                field-level-help="Select trailers related to the Lead"
+                options={trailerOptions}
+                value={selectedTrailers}
+                onchange={handleTrailerChange}>
+            </lightning-dual-listbox>
+        </div>
+
+        <div class="slds-p-around_medium">
+            <!-- Driver Dual Listbox -->
+            <lightning-dual-listbox
+                name="drivers"
+                label="Select Drivers"
+                source-label="Available Drivers"
+                selected-label="Selected Drivers"
+                field-level-help="Select drivers related to the Lead"
+                options={driverOptions}
+                value={selectedDrivers}
+                onchange={handleDriverChange}>
+            </lightning-dual-listbox>
+        </div>
+
+        <div class="slds-p-around_medium">
+            <!-- Coverage Dual Listbox -->
+            <lightning-dual-listbox
+                name="coverages"
+                label="Select Coverages"
+                source-label="Available Coverages"
+                selected-label="Selected Coverages"
+                field-level-help="Select coverages related to the Lead"
+                options={coverageOptions}
+                value={selectedCoverages}
+                onchange={handleCoverageChange}>
+            </lightning-dual-listbox>
+        </div>
+
+        <!-- Save Button -->
+        <div class="slds-p-around_medium">
+            <lightning-button label="Add Assets to Coverages" variant="brand" onclick={handleSave}></lightning-button>
+        </div>
+    </lightning-card>
+</template>

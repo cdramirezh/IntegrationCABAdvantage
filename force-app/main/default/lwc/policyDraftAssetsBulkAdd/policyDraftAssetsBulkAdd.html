@@ -1,0 +1,50 @@
+<template>
+    <lightning-card title="Policy Asset Assignment" icon-name="custom:custom63">
+        <div class="slds-p-around_medium">
+            <!-- Vehicle Dual Listbox -->
+            <lightning-dual-listbox
+                name="vehicles"
+                label="Select Vehicles"
+                source-label="Available Vehicles"
+                selected-label="Selected Vehicles"
+                field-level-help="Select vehicles to relate to the policy draft"
+                options={vehicleOptions}
+                value={selectedVehicles}
+                onchange={handleVehicleChange}>
+            </lightning-dual-listbox>
+        </div>
+
+        <div class="slds-p-around_medium">
+            <!-- Trailer Dual Listbox -->
+            <lightning-dual-listbox
+                name="trailers"
+                label="Select Trailers"
+                source-label="Available Trailers"
+                selected-label="Selected Trailers"
+                field-level-help="Select trailers to relate to the policy draft"
+                options={trailerOptions}
+                value={selectedTrailers}
+                onchange={handleTrailerChange}>
+            </lightning-dual-listbox>
+        </div>
+
+        <div class="slds-p-around_medium">
+            <!-- Driver Dual Listbox -->
+            <lightning-dual-listbox
+                name="drivers"
+                label="Select Drivers"
+                source-label="Available Drivers"
+                selected-label="Selected Drivers"
+                field-level-help="Select drivers to relate to the policy draft"
+                options={driverOptions}
+                value={selectedDrivers}
+                onchange={handleDriverChange}>
+            </lightning-dual-listbox>
+        </div>
+
+        <!-- Save Button -->
+        <div class="slds-p-around_medium">
+            <lightning-button label="Relate Assets to Policy Draft" variant="brand" onclick={handleSave}></lightning-button>
+        </div>
+    </lightning-card>
+</template>

@@ -1,0 +1,49 @@
+<template>
+    <lightning-card title="Active Policies and Coverages">
+        <template if:true={policies}>
+            <div class="accordion">
+                <template for:each={policies} for:item="policyWrapper">
+                    <div key={policyWrapper.policy.Id} class="accordion-section">
+                        <div class="accordion-header" onclick={toggleSection} data-id={policyWrapper.policy.Id}>
+                            <span class="accordion-icon" data-icon-id={policyWrapper.policy.Id}>›</span>
+                            <div class="accordion-title">
+                                <a
+                                    href={policyWrapper.policy.url}
+                                    target="_blank"
+                                    class="policy-name"
+                                    onclick={stopClickPropagation}
+                                >
+                                    {policyWrapper.policy.Name}
+                                </a>
+                                <!-- <span class="policy-name">{policyWrapper.policy.Name}</span> -->
+                                <span class="policy-info">
+                                    Status: {policyWrapper.policy.Status__c} |
+                                    Effective Date: {policyWrapper.policy.formattedEffectiveDate} | 
+                                    Expiration Date: {policyWrapper.policy.formattedExpirationDate} | 
+                                    Premium: {policyWrapper.policy.Premium__c} | 
+                                    MGA Co: {policyWrapper.policy.mgacoName} |
+                                    Insurance Co: {policyWrapper.policy.insurancecoName} 
+                                </span>
+                            </div>
+                        </div>
+                        <div class="accordion-content hidden" data-content-id={policyWrapper.policy.Id}>
+                            <template if:true={policyWrapper.coverages}>
+                                <lightning-datatable
+                                    key-field="Id"
+                                    data={policyWrapper.coverages}
+                                    columns={columns}>
+                                </lightning-datatable>
+                            </template>
+                            <template if:false={policyWrapper.coverages}>
+                                <p>No Coverages available for this Policy.</p>
+                            </template>
+                        </div>
+                    </div>
+                </template>
+            </div>
+        </template>
+        <template if:false={policies}>
+            <p>No Policies found for this Opportunity.</p>
+        </template>
+    </lightning-card>
+</template>

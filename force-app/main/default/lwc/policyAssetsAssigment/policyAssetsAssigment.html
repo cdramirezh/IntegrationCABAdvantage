@@ -1,0 +1,44 @@
+<template>
+    <lightning-card title="Policy Asset Selector" icon-name="custom:custom63">
+        <div class="slds-p-around_medium">
+            <lightning-dual-listbox
+                name="vehicles"
+                label="Select Vehicles"
+                source-label="Available Vehicles"
+                selected-label="Selected Vehicles"
+                field-level-help="Select vehicles related to this policy"
+                options={vehicles}
+                value={selectedVehicles}
+                onchange={handleVehicleChange}
+            ></lightning-dual-listbox>
+
+            <lightning-dual-listbox
+                name="trailers"
+                label="Select Trailers"
+                source-label="Available Trailers"
+                selected-label="Selected Trailers"
+                field-level-help="Select trailers related to this policy"
+                options={trailers}
+                value={selectedTrailers}
+                onchange={handleTrailerChange}
+            ></lightning-dual-listbox>
+
+            <lightning-dual-listbox
+                name="drivers"
+                label="Select Drivers"
+                source-label="Available Drivers"
+                selected-label="Selected Drivers"
+                field-level-help="Select drivers related to this policy"
+                options={drivers}
+                value={selectedDrivers}
+                onchange={handleDriverChange}
+            ></lightning-dual-listbox>
+        </div>
+        <lightning-button
+            label="Relate Assets to Policy"
+            variant="brand"
+            class="slds-m-top_medium"
+            onclick={handleSave}
+        ></lightning-button>
+    </lightning-card>
+</template>

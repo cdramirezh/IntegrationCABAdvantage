@@ -1,0 +1,51 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CustomField xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>Loss_Reason__c</fullName>
+    <externalId>false</externalId>
+    <label>Loss Reason</label>
+    <required>false</required>
+    <trackHistory>false</trackHistory>
+    <trackTrending>false</trackTrending>
+    <type>Picklist</type>
+    <valueSet>
+        <restricted>true</restricted>
+        <valueSetDefinition>
+            <sorted>false</sorted>
+            <value>
+                <fullName>Documentation Not Submitted</fullName>
+                <default>false</default>
+                <label>Documentation Not Submitted</label>
+            </value>
+            <value>
+                <fullName>Lead Not Engaged</fullName>
+                <default>false</default>
+                <label>Lead Not Engaged</label>
+            </value>
+            <value>
+                <fullName>IRM lacked engagement</fullName>
+                <default>false</default>
+                <label>IRM lacked engagement</label>
+            </value>
+            <value>
+                <fullName>Outbid by competitor</fullName>
+                <default>false</default>
+                <label>Outbid by competitor</label>
+            </value>
+            <value>
+                <fullName>Unresponsive client</fullName>
+                <default>false</default>
+                <label>Unresponsive client</label>
+            </value>
+            <value>
+                <fullName>Closed business</fullName>
+                <default>false</default>
+                <label>Closed business</label>
+            </value>
+            <value>
+                <fullName>No Market</fullName>
+                <default>false</default>
+                <label>No Market</label>
+            </value>
+        </valueSetDefinition>
+    </valueSet>
+</CustomField>

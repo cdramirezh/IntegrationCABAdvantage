@@ -1,0 +1,32 @@
+<template>
+    <!--
+    <lightning-card>
+        <template if:true={additionsDeletions}>
+            <lightning-datatable
+                key-field="Id"
+                data={additionsDeletions}
+                columns={columnsaddordel}
+                draft-values={draftValues}
+                onsave={handleSave}
+                hide-checkbox-column
+                inline-editing-enabled>
+            </lightning-datatable>
+        </template>
+    </lightning-card>
+-->
+
+    <lightning-card title="Modifications" icon-name="custom:custom19">
+        <template if:true={modifications}>
+            <lightning-datatable
+                key-field="Id"
+                data={modifications}
+                columns={columnmod}
+                draft-values={draftValues}
+                onsave={handleSave}
+                hide-checkbox-column
+                inline-editing-enabled>
+            </lightning-datatable>
+        </template>
+    </lightning-card> 
+
+</template>

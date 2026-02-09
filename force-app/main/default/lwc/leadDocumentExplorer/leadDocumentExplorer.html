@@ -1,0 +1,19 @@
+<template>
+    <template if:true={docPackages}>
+        <template for:each={docPackages} for:item="docPackage">
+            <lightning-card key={docPackage.Id} title={docPackage.Type__c} class="my-card">
+                <template if:true={docPackage.Documents__r}>
+                    <lightning-datatable
+                        key-field="Id"
+                        data={docPackage.Documents__r}
+                        columns={columns}
+                        hide-checkbox-column>
+                    </lightning-datatable>
+                </template>
+                <template if:false={docPackage.Documents__r}>
+                    <p>No documents available.</p>
+                </template>
+            </lightning-card>
+        </template>
+    </template>
+</template>

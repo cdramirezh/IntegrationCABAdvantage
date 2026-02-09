@@ -1,0 +1,27 @@
+<template>
+    <lightning-card title="Policy Coverages" icon-name="utility:list">
+        <template if:true={isLoading}>
+            <lightning-spinner alternative-text="Loading..."></lightning-spinner>
+        </template>
+        <template if:false={isLoading}>
+            <lightning-dual-listbox
+                name="coverageList"
+                label="Select Coverages"
+                source-label="Available Coverages"
+                selected-label="Selected Coverages"
+                field-level-help="The coverages listed here are the ones related to the Polcy Draft, move coverages between the lists to assign them to this Policy."
+                options={options}
+                value={selected}
+                onchange={handleChange}>
+            </lightning-dual-listbox>
+            <br></br>
+            <div class="button-container">
+                <lightning-button
+                    label="Assign Coverages to this Policy"
+                    variant="brand"
+                    onclick={handleSave}>
+                </lightning-button>
+            </div>
+        </template>
+    </lightning-card>
+</template>

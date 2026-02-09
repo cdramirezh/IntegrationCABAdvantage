@@ -1,0 +1,18 @@
+.slds-table .accepted-status {
+    background-color: #c6e6c3; /* Light green */
+    font-weight: bold;
+}
+
+.slds-table .rejected-status {
+    background-color: #fbbebe; /* Light red */
+    font-weight: bold;
+}
+
+.slds-table .pending-status {
+    background-color: #ffeaa7; /* Light yellow */
+    font-weight: bold;
+}
+
+.slds-table .default-status {
+    background-color: #f4f6f9; /* Default grey */
+}

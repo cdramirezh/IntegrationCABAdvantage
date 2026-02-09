@@ -1,0 +1,17 @@
+<template>
+    <lightning-card title="W Call Logs" icon-name="standard:logging">
+        <template if:true={isLoading}>
+            <lightning-spinner alternative-text="Loading" size="medium"></lightning-spinner>
+        </template>
+        <template if:true={error}>
+            <p>Error loading call logs: {error.message}</p>
+        </template>
+        <template if:true={hasLogs}>
+            <lightning-datatable key-field="id" data={logs} columns={columns} hide-checkbox-column>
+            </lightning-datatable>
+        </template>
+        <template if:false={hasLogs}>
+            <p>No call logs available for this Lead.</p>
+        </template>
+    </lightning-card>
+</template>

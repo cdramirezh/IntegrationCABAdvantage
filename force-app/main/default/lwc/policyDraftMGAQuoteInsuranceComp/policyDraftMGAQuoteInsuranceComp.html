@@ -1,0 +1,80 @@
+<template>
+    <template if:true={quotesWithInsurance}>
+        <!--
+        <div class="slds-text-heading_large">
+            <lightning-icon icon-name="standard:quotes" size="small"></lightning-icon> MGA Quotes for this draft.
+        </div>
+        -->
+        <template for:each={quotesWithInsurance} for:item="quoteWithInsurance">
+
+            <!-- Insurance Company Information Table -->
+            <!-- <lightning-card key={quoteWithInsurance.Id} icon-name="custom:custom70"> -->
+            <lightning-card key={quoteWithInsurance.Id}>
+                
+                <!-- Conditional rendering to check if MGA_Company__r exists -->
+                <div class="slds-text-heading_medium">                    
+                        <lightning-icon icon-name="standard:quotes" size="small"></lightning-icon> MGA Quote: {quoteWithInsurance.quote.Name}                   
+                </div>
+                <div class="slds-text-heading_small">
+                    <template if:true={quoteWithInsurance.quote.MGA_Company__r}>
+                        MGA Company: {quoteWithInsurance.quote.MGA_Company__r.Name}
+                    </template>
+                    <template if:false={quoteWithInsurance.quote.MGA_Company__r}>
+                        Not submitted yet to any MGA
+                    </template>
+                </div>
+
+                <div class="slds-p-around_medium">
+                    <lightning-progress-indicator current-step={quoteWithInsurance.quote.Status__c} type="path" variant="base">
+                        <template for:each={statusOptions} for:item="step">
+                            <lightning-progress-step key={step.value} label={step.label} value={step.value}></lightning-progress-step>
+                        </template>
+                    </lightning-progress-indicator>
+                </div>
+
+                <div class="slds-p-around_medium">
+                    <table class="slds-table slds-table_cell-buffer slds-table_bordered">
+                        <thead>
+                            <tr>
+                                <th scope="col">
+                                    <div class="slds-truncate" title="Insurance Company">Insurance Company</div>
+                                </th>
+                                <th scope="col">
+                                    <div class="slds-truncate" title="Insurance Companies">Status</div>
+                                </th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <template for:each={quoteWithInsurance.insuranceCompanies} for:item="insco">
+                            <tr key={insco.id}>
+                                <td data-label="Insurance Company">
+                                    <a href="javascript:void(0);" data-record-id={insco.Id} onclick={navigateToRecord}>
+                                        <template if:true={insco.Insurance_Company__r}>
+                                            {insco.Insurance_Company__r.Name}
+                                        </template>
+                                        <template if:false={insco.Insurance_Company__r}>
+                                            No Insurance Company Available
+                                        </template>
+                                    </a>
+                                </td>
+                                <td data-label="Status">
+                                    <template if:true={insco.Status__c}>
+                                        {insco.Status__c}
+                                    </template>
+                                    <template if:false={insco.Status__c}>
+                                        No Status Available
+                                    </template>
+                                </td>
+                            </tr>
+                            </template>
+                        </tbody>
+                    </table>
+                </div>
+            </lightning-card>
+
+        </template>
+    </template>
+    <template if:false={quotesWithInsurance}>
+        <p>No MGA Quotes or Insurance Company records found.</p>
+    </template>
+</template>

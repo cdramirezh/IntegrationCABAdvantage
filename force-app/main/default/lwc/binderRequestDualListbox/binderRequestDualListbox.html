@@ -1,0 +1,35 @@
+<template>
+    <lightning-card title="Select MGA Quote Insurance Companies">
+        <template if:true={options}>
+            <lightning-dual-listbox
+                name="insuranceCompanies"
+                label="Insurance Companies"
+                source-label="Available"
+                selected-label="Selected"
+                field-level-help="Select insurance companies to associate with this binder request"
+                options={options}
+                value={selected}
+                onchange={handleChange}>
+            </lightning-dual-listbox>
+            <br></br>
+            <lightning-button
+                label="Save"
+                variant="brand"
+                class="s-margin-top"
+                onclick={handleSave}>
+            </lightning-button>
+        </template>
+        <template if:true={isLoading}>
+            <lightning-spinner alternative-text="Loading"></lightning-spinner>
+        </template>
+        <template if:true={error}>
+            <div class="slds-text-color_error">
+                <ul>
+                    <template for:each={errors} for:item="error">
+                        <li key={error}>{error}</li>
+                    </template>
+                </ul>
+            </div>
+        </template>
+    </lightning-card>
+</template>
