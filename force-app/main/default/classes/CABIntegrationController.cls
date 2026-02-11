@@ -1,11 +1,13 @@
 public with sharing class CABIntegrationController {
     
-    // Clase wrapper optimizada para el nuevo payload
+    // Clase wrapper que coincide exactamente con tu payload definitivo
     public class CABResponse {
         public String carrierName;
-        public List<PhoneData> carrierPhone;
-        public List<String> carrierEmail;
-        public List<String> companyRepresentative;
+        public String companyDBA; // Opcional
+        public String carrierPhone;
+        public String carrierMobile;
+        public String carrierEmail;
+        public String companyRepresentative;
         public String mailingStreet;
         public String mailingCity;
         public String mailingState;
@@ -15,21 +17,14 @@ public with sharing class CABIntegrationController {
         public String parkingState;
         public String parkingZIP;
         public String federalFiling;
-        public String stateFiling;
-    }
-
-    public class PhoneData {
-        public String phoneNumber;
-        public List<String> types;
+        public String stateFiling; // Opcional
     }
 
     @AuraEnabled
     public static String searchCarrier(String dot) {
-        Integer maxTimeout = 120 * 1000; // seconds
-        // This has to be configured as a Named Credential to the CAB Advantage BOT Middleware Server
         String cabAdvantageBotEndpoint = 'https://royalty-bot-production.up.railway.app/get_carrier_data?dot=';
 
-        // 1. Buscar si ya existe un Lead con ese DOT
+        // 1. Validaciones de Seguridad y Duplicados
         if (!Schema.sObjectType.Lead.isAccessible()) {
             throw new AuraHandledException('Insufficient privileges to access Lead records.');
         }
@@ -40,27 +35,30 @@ public with sharing class CABIntegrationController {
         }
 
         if (dot.length() < 5 || dot.length() > 8) {
-            throw new AuraHandledException('El número DOT proporcionado no es válido.');
+            throw new AuraHandledException('El número DOT proporcionado no es válido (debe tener entre 5 y 8 dígitos).');
         }
 
         try {
+            // 2. Llamada al Middleware (Bot)
             Http http = new Http();
             HttpRequest request = new HttpRequest();
-            request.setEndpoint( cabAdvantageBotEndpoint + dot);
+            // Asegúrate de usar la Named Credential configurada
+            request.setEndpoint(cabAdvantageBotEndpoint + dot);
             request.setMethod('GET');
-            request.setTimeout(maxTimeout);
-
+            request.setTimeout(120000);
+            System.debug('--- DEBUG: Llamando al Endpoint: ' + request.getEndpoint());
             HttpResponse response = http.send(request);
-            
+            System.debug('--- DEBUG: Status Code: ' + response.getStatusCode());
+            System.debug('--- DEBUG: Body Recibido: ' + response.getBody());
             if (response.getStatusCode() != 200) {
                 throw new AuraHandledException('Error del bot (' + response.getStatusCode() + '): ' + response.getStatus());
             }
             
-            // Deserializar la respuesta
+            // 3. Deserialización del payload plano
             CABResponse data = (CABResponse) JSON.deserialize(response.getBody(), CABResponse.class);
-            
+            System.debug('--- DEBUG: Carrier Name parseado: ' + data.carrierName);
             if (data == null || String.isBlank(data.carrierName)) {
-                throw new AuraHandledException('El bot no devolvió datos para este DOT.');
+                throw new AuraHandledException('El bot no encontró información para el DOT: ' + dot);
             }
 
             // 4. Mapeo y Creación del Lead
@@ -68,12 +66,15 @@ public with sharing class CABIntegrationController {
                 throw new AuraHandledException('Insufficient privileges to create Lead records.');
             }
             
+            // Campos base y obligatorios
             Lead newLead = new Lead(
                 USDOT__c = dot,
                 Company = data.carrierName,
                 LastName = data.carrierName,
-                Status = 'Unqualified',
-                Owner_DOB__c = Date.newInstance(1980, 1, 1),
+                Phone = data.carrierPhone,
+                MobilePhone = data.carrierMobile,
+                Email = data.carrierEmail,
+                Company_Rep__c = data.companyRepresentative,
                 Mailing_Street__c = data.mailingStreet,
                 Mailing_City__c = data.mailingCity,
                 Mailing_State__c = data.mailingState,
@@ -83,35 +84,26 @@ public with sharing class CABIntegrationController {
                 Parking_State__c = data.parkingState,
                 Parking_ZIP__c = data.parkingZIP,
                 Federal_Filing__c = data.federalFiling,
-                State_Filing__c = data.stateFiling
+                Status = 'Unqualified',
+                Owner_DOB__c = Date.newInstance(1980, 1, 1) // Valor constante solicitado
             );
 
-            // Mapeo de listas (Email y Representante)
-            if (data.carrierEmail != null && !data.carrierEmail.isEmpty()) {
-                newLead.Email = data.carrierEmail[0];
-            }
-            if (data.companyRepresentative != null && !data.companyRepresentative.isEmpty()) {
-                newLead.Company_Rep__c = data.companyRepresentative[0];
-            }
-
-            // Mapeo de Teléfonos por Tipo
-            if (data.carrierPhone != null) {
-                for (PhoneData p : data.carrierPhone) {
-                    if (newLead.MobilePhone == null && p.types.contains('cell')) {
-                        newLead.MobilePhone = p.phoneNumber;
-                    }
-                    if (newLead.Phone == null && p.types.contains('phone')) {
-                        newLead.Phone = p.phoneNumber;
-                    }
-                }
+            // 5. Manejo de campos opcionales (evita asignar nulls)
+            if (String.isNotBlank(data.stateFiling)) {
+                newLead.State_Filing__c = data.stateFiling;
             }
             
-            insert newLead;
+            if (String.isNotBlank(data.companyDBA)) {
+                newLead.DBA__c = data.companyDBA;
+            }
 
+            insert newLead;
             return newLead.Id;
 
         } catch (Exception e) {
-            throw new AuraHandledException('Error procesando el carrier: ' + e.getMessage());
+            System.debug('--- ERROR: ' + e.getMessage());
+            System.debug('--- STACKTRACE: ' + e.getStackTraceString());
+            throw new AuraHandledException('Error en la integración: ' + e.getMessage());
         }
     }
 }
