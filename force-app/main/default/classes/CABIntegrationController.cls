@@ -1,11 +1,26 @@
 public with sharing class CABIntegrationController {
     
-    // Clase wrapper para mapear la respuesta del bot
+    // Clase wrapper optimizada para el nuevo payload
     public class CABResponse {
-        public CarrierData carrierData;
-    }
-    public class CarrierData {
         public String carrierName;
+        public List<PhoneData> carrierPhone;
+        public List<String> carrierEmail;
+        public List<String> companyRepresentative;
+        public String mailingStreet;
+        public String mailingCity;
+        public String mailingState;
+        public String mailingZIP;
+        public String parkingStreet;
+        public String parkingCity;
+        public String parkingState;
+        public String parkingZIP;
+        public String federalFiling;
+        public String stateFiling;
+    }
+
+    public class PhoneData {
+        public String phoneNumber;
+        public List<String> types;
     }
 
     @AuraEnabled
@@ -21,20 +36,14 @@ public with sharing class CABIntegrationController {
         
         List<Lead> existingLeads = [SELECT Id FROM Lead WHERE USDOT__c = :dot LIMIT 1];
         if (!existingLeads.isEmpty()) {
-            // Devolvemos el ID para que el LWC pueda redirigir
             return 'REDIRECT:' + existingLeads[0].Id;
         }
 
-        // 2. Simulación de validación de DOT (ej. debe tener entre 5 y 8 dígitos)
         if (dot.length() < 5 || dot.length() > 8) {
             throw new AuraHandledException('El número DOT proporcionado no es válido.');
         }
 
         try {
-            // 3. Configuración del Callout (Simulado por ahora)
-            // En un escenario real, aquí descomentarías el http.send(request)
-            
-
             Http http = new Http();
             HttpRequest request = new HttpRequest();
             request.setEndpoint( cabAdvantageBotEndpoint + dot);
@@ -44,28 +53,58 @@ public with sharing class CABIntegrationController {
             HttpResponse response = http.send(request);
             
             if (response.getStatusCode() != 200) {
-                System.debug('Error response: ' + response.getBody());
-                throw new AuraHandledException('Error from server: ' + response.getStatus());
+                throw new AuraHandledException('Error del bot (' + response.getStatusCode() + '): ' + response.getStatus());
             }
             
-            // 4. Deserializar la respuesta
-            CABResponse responseData = (CABResponse) JSON.deserialize(response.getBody(), CABResponse.class);
+            // Deserializar la respuesta
+            CABResponse data = (CABResponse) JSON.deserialize(response.getBody(), CABResponse.class);
             
-            if (responseData.carrierData == null || String.isBlank(responseData.carrierData.carrierName)) {
-                throw new AuraHandledException('La respuesta del bot no contiene información válida del carrier.');
+            if (data == null || String.isBlank(data.carrierName)) {
+                throw new AuraHandledException('El bot no devolvió datos para este DOT.');
             }
 
-            // 5. Crear el Lead con campos constantes y dinámicos
+            // 4. Mapeo y Creación del Lead
             if (!Schema.sObjectType.Lead.isCreateable()) {
                 throw new AuraHandledException('Insufficient privileges to create Lead records.');
             }
             
-            Lead newLead = new Lead();
-            newLead.USDOT__c = dot; // Asegúrate de tener este campo en Lead
-            newLead.Company = responseData.carrierData.carrierName; // Dinámico del bot
-            newLead.LastName = responseData.carrierData.carrierName; // Requerido: usamos el nombre del carrier
-            newLead.Owner_DOB__c = Date.newInstance(1980, 1, 1); // Constante por ahora
-            newLead.Status = 'Unqualified';
+            Lead newLead = new Lead(
+                USDOT__c = dot,
+                Company = data.carrierName,
+                LastName = data.carrierName,
+                Status = 'Unqualified',
+                Owner_DOB__c = Date.newInstance(1980, 1, 1),
+                Mailing_Street__c = data.mailingStreet,
+                Mailing_City__c = data.mailingCity,
+                Mailing_State__c = data.mailingState,
+                Mailing_ZIP__c = data.mailingZIP,
+                Parking_Street__c = data.parkingStreet,
+                Parking_City__c = data.parkingCity,
+                Parking_State__c = data.parkingState,
+                Parking_ZIP__c = data.parkingZIP,
+                Federal_Filing__c = data.federalFiling,
+                State_Filing__c = data.stateFiling
+            );
+
+            // Mapeo de listas (Email y Representante)
+            if (data.carrierEmail != null && !data.carrierEmail.isEmpty()) {
+                newLead.Email = data.carrierEmail[0];
+            }
+            if (data.companyRepresentative != null && !data.companyRepresentative.isEmpty()) {
+                newLead.Company_Rep__c = data.companyRepresentative[0];
+            }
+
+            // Mapeo de Teléfonos por Tipo
+            if (data.carrierPhone != null) {
+                for (PhoneData p : data.carrierPhone) {
+                    if (newLead.MobilePhone == null && p.types.contains('cell')) {
+                        newLead.MobilePhone = p.phoneNumber;
+                    }
+                    if (newLead.Phone == null && p.types.contains('phone')) {
+                        newLead.Phone = p.phoneNumber;
+                    }
+                }
+            }
             
             insert newLead;
 
