@@ -1,0 +1,135 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Flow xmlns="http://soap.sforce.com/2006/04/metadata">
+    <actionCalls>
+        <name>Policy_Draft_Submitted_Notification_Action</name>
+        <label>Policy Draft Submitted Notification Action</label>
+        <locationX>314</locationX>
+        <locationY>539</locationY>
+        <actionName>PolicyDrafSubmittedNotification</actionName>
+        <actionType>apex</actionType>
+        <flowTransactionModel>CurrentTransaction</flowTransactionModel>
+        <inputParameters>
+            <name>policyDraftIds</name>
+            <value>
+                <elementReference>$Record.Id</elementReference>
+            </value>
+        </inputParameters>
+        <nameSegment>PolicyDrafSubmittedNotification</nameSegment>
+        <offset>0</offset>
+    </actionCalls>
+    <actionCalls>
+        <name>Policy_Draft_to_Submitted_Email_Alert</name>
+        <label>Policy Draft to Submitted Email Alert</label>
+        <locationX>50</locationX>
+        <locationY>539</locationY>
+        <actionName>Policy_Draft__c.Policy_Draft_to_Submitted</actionName>
+        <actionType>emailAlert</actionType>
+        <flowTransactionModel>CurrentTransaction</flowTransactionModel>
+        <inputParameters>
+            <name>SObjectRowId</name>
+            <value>
+                <elementReference>$Record.Id</elementReference>
+            </value>
+        </inputParameters>
+        <nameSegment>Policy_Draft__c.Policy_Draft_to_Submitted</nameSegment>
+        <offset>0</offset>
+    </actionCalls>
+    <apiVersion>62.0</apiVersion>
+    <areMetricsLoggedToDataCloud>false</areMetricsLoggedToDataCloud>
+    <decisions>
+        <name>Cambio_de_Open_a_Working</name>
+        <label>Cambio de Open a Working</label>
+        <locationX>380</locationX>
+        <locationY>323</locationY>
+        <defaultConnectorLabel>Default Outcome</defaultConnectorLabel>
+        <rules>
+            <name>Status_Changed</name>
+            <conditionLogic>and</conditionLogic>
+            <conditions>
+                <leftValueReference>$Record.Status__c</leftValueReference>
+                <operator>EqualTo</operator>
+                <rightValue>
+                    <stringValue>Submitted</stringValue>
+                </rightValue>
+            </conditions>
+            <conditions>
+                <leftValueReference>$Record__Prior.Status__c</leftValueReference>
+                <operator>EqualTo</operator>
+                <rightValue>
+                    <stringValue>Working</stringValue>
+                </rightValue>
+            </conditions>
+            <connector>
+                <targetReference>Policy_Draft_Agency_Loookup_is_Populated_or_not</targetReference>
+            </connector>
+            <label>Status Changed</label>
+        </rules>
+    </decisions>
+    <decisions>
+        <name>Policy_Draft_Agency_Loookup_is_Populated_or_not</name>
+        <label>Policy Draft Agency Loookup is Populated or not</label>
+        <locationX>182</locationX>
+        <locationY>431</locationY>
+        <defaultConnector>
+            <targetReference>Policy_Draft_Submitted_Notification_Action</targetReference>
+        </defaultConnector>
+        <defaultConnectorLabel>Agency Lookup is Populated</defaultConnectorLabel>
+        <rules>
+            <name>Use_Agency_Picklist</name>
+            <conditionLogic>and</conditionLogic>
+            <conditions>
+                <leftValueReference>$Record.AgencyLookupF__c</leftValueReference>
+                <operator>IsBlank</operator>
+                <rightValue>
+                    <booleanValue>true</booleanValue>
+                </rightValue>
+            </conditions>
+            <connector>
+                <targetReference>Policy_Draft_to_Submitted_Email_Alert</targetReference>
+            </connector>
+            <label>Use Agency Picklist</label>
+        </rules>
+    </decisions>
+    <environments>Default</environments>
+    <interviewLabel>Policy Draft Working to Submitted Notification Action {!$Flow.CurrentDateTime}</interviewLabel>
+    <label>Policy Draft Working to Submitted Notification Action</label>
+    <processMetadataValues>
+        <name>BuilderType</name>
+        <value>
+            <stringValue>LightningFlowBuilder</stringValue>
+        </value>
+    </processMetadataValues>
+    <processMetadataValues>
+        <name>CanvasMode</name>
+        <value>
+            <stringValue>AUTO_LAYOUT_CANVAS</stringValue>
+        </value>
+    </processMetadataValues>
+    <processMetadataValues>
+        <name>OriginBuilderType</name>
+        <value>
+            <stringValue>LightningFlowBuilder</stringValue>
+        </value>
+    </processMetadataValues>
+    <processType>AutoLaunchedFlow</processType>
+    <start>
+        <locationX>254</locationX>
+        <locationY>0</locationY>
+        <connector>
+            <targetReference>Cambio_de_Open_a_Working</targetReference>
+        </connector>
+        <doesRequireRecordChangedToMeetCriteria>true</doesRequireRecordChangedToMeetCriteria>
+        <filterLogic>and</filterLogic>
+        <filters>
+            <field>Status__c</field>
+            <operator>EqualTo</operator>
+            <value>
+                <stringValue>Submitted</stringValue>
+            </value>
+        </filters>
+        <object>Policy_Draft__c</object>
+        <recordTriggerType>Update</recordTriggerType>
+        <triggerType>RecordAfterSave</triggerType>
+    </start>
+    <status>Obsolete</status>
+</Flow>

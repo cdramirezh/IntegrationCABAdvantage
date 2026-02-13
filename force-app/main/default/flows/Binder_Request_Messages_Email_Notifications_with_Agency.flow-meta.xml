@@ -1,0 +1,105 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Flow xmlns="http://soap.sforce.com/2006/04/metadata">
+    <actionCalls>
+        <name>Send_Email_Notification_using_Agency_lookup</name>
+        <label>Send Email Notification using Agency lookup</label>
+        <locationX>314</locationX>
+        <locationY>431</locationY>
+        <actionName>BindReqNewMsgEmailNotificationAction_v3</actionName>
+        <actionType>apex</actionType>
+        <flowTransactionModel>CurrentTransaction</flowTransactionModel>
+        <inputParameters>
+            <name>messageIds</name>
+            <value>
+                <elementReference>$Record.Id</elementReference>
+            </value>
+        </inputParameters>
+        <nameSegment>BindReqNewMsgEmailNotificationAction_v3</nameSegment>
+        <offset>0</offset>
+    </actionCalls>
+    <actionCalls>
+        <name>Send_New_Message_Email_Notification_for_Bind_Req</name>
+        <label>Send New Message Email Notification for Bind Req</label>
+        <locationX>50</locationX>
+        <locationY>431</locationY>
+        <actionName>BindReqNewMsgEmailNotificationAction_v2</actionName>
+        <actionType>apex</actionType>
+        <flowTransactionModel>CurrentTransaction</flowTransactionModel>
+        <inputParameters>
+            <name>messageIds</name>
+            <value>
+                <elementReference>$Record.Id</elementReference>
+            </value>
+        </inputParameters>
+        <nameSegment>BindReqNewMsgEmailNotificationAction_v2</nameSegment>
+        <offset>0</offset>
+    </actionCalls>
+    <apiVersion>62.0</apiVersion>
+    <areMetricsLoggedToDataCloud>false</areMetricsLoggedToDataCloud>
+    <decisions>
+        <name>Agency_Loookup_is_Populated_or_not</name>
+        <label>Agency Loookup is Populated or not</label>
+        <locationX>182</locationX>
+        <locationY>323</locationY>
+        <defaultConnector>
+            <targetReference>Send_Email_Notification_using_Agency_lookup</targetReference>
+        </defaultConnector>
+        <defaultConnectorLabel>Use Agency Lookup</defaultConnectorLabel>
+        <rules>
+            <name>Use_Agency_Picklist</name>
+            <conditionLogic>and</conditionLogic>
+            <conditions>
+                <leftValueReference>$Record.Chat__r.Binder_Request__r.Policy_Draft__r.AgencyLookupF__c</leftValueReference>
+                <operator>IsBlank</operator>
+                <rightValue>
+                    <booleanValue>true</booleanValue>
+                </rightValue>
+            </conditions>
+            <connector>
+                <targetReference>Send_New_Message_Email_Notification_for_Bind_Req</targetReference>
+            </connector>
+            <label>Use Agency Picklist</label>
+        </rules>
+    </decisions>
+    <environments>Default</environments>
+    <interviewLabel>Binder Request Messages Email Notifications with Agency {!$Flow.CurrentDateTime}</interviewLabel>
+    <label>Binder Request Messages Email Notifications with Agency</label>
+    <processMetadataValues>
+        <name>BuilderType</name>
+        <value>
+            <stringValue>LightningFlowBuilder</stringValue>
+        </value>
+    </processMetadataValues>
+    <processMetadataValues>
+        <name>CanvasMode</name>
+        <value>
+            <stringValue>AUTO_LAYOUT_CANVAS</stringValue>
+        </value>
+    </processMetadataValues>
+    <processMetadataValues>
+        <name>OriginBuilderType</name>
+        <value>
+            <stringValue>LightningFlowBuilder</stringValue>
+        </value>
+    </processMetadataValues>
+    <processType>AutoLaunchedFlow</processType>
+    <start>
+        <locationX>56</locationX>
+        <locationY>0</locationY>
+        <connector>
+            <targetReference>Agency_Loookup_is_Populated_or_not</targetReference>
+        </connector>
+        <filterLogic>and</filterLogic>
+        <filters>
+            <field>Chat_Object__c</field>
+            <operator>EqualTo</operator>
+            <value>
+                <stringValue>Binder Request</stringValue>
+            </value>
+        </filters>
+        <object>Message__c</object>
+        <recordTriggerType>Create</recordTriggerType>
+        <triggerType>RecordAfterSave</triggerType>
+    </start>
+    <status>Active</status>
+</Flow>

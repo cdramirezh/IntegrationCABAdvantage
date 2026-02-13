@@ -1,0 +1,127 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Flow xmlns="http://soap.sforce.com/2006/04/metadata">
+    <apiVersion>62.0</apiVersion>
+    <areMetricsLoggedToDataCloud>false</areMetricsLoggedToDataCloud>
+    <environments>Default</environments>
+    <interviewLabel>Endorsement Request Document Packages Creation {!$Flow.CurrentDateTime}</interviewLabel>
+    <label>Endorsement Request Document Packages Creation</label>
+    <processMetadataValues>
+        <name>BuilderType</name>
+        <value>
+            <stringValue>LightningFlowBuilder</stringValue>
+        </value>
+    </processMetadataValues>
+    <processMetadataValues>
+        <name>CanvasMode</name>
+        <value>
+            <stringValue>AUTO_LAYOUT_CANVAS</stringValue>
+        </value>
+    </processMetadataValues>
+    <processMetadataValues>
+        <name>OriginBuilderType</name>
+        <value>
+            <stringValue>LightningFlowBuilder</stringValue>
+        </value>
+    </processMetadataValues>
+    <processType>AutoLaunchedFlow</processType>
+    <recordCreates>
+        <name>Create_Aftersales_Documents_Package</name>
+        <label>Create Aftersales Documents Package</label>
+        <locationX>176</locationX>
+        <locationY>647</locationY>
+        <inputAssignments>
+            <field>Endorsement_Request__c</field>
+            <value>
+                <elementReference>$Record.Id</elementReference>
+            </value>
+        </inputAssignments>
+        <inputAssignments>
+            <field>Type__c</field>
+            <value>
+                <stringValue>Aftersales</stringValue>
+            </value>
+        </inputAssignments>
+        <object>Documents_Package__c</object>
+        <storeOutputAutomatically>true</storeOutputAutomatically>
+    </recordCreates>
+    <recordCreates>
+        <name>Create_Endorsement_Docs_Documents_Packages</name>
+        <label>Create Endorsement Docs Documents Packages</label>
+        <locationX>176</locationX>
+        <locationY>323</locationY>
+        <connector>
+            <targetReference>Create_Signed_Endorsement_Docs_Document_Pack_Folder</targetReference>
+        </connector>
+        <inputAssignments>
+            <field>Endorsement_Request__c</field>
+            <value>
+                <elementReference>$Record.Id</elementReference>
+            </value>
+        </inputAssignments>
+        <inputAssignments>
+            <field>Type__c</field>
+            <value>
+                <stringValue>Bind Docs</stringValue>
+            </value>
+        </inputAssignments>
+        <object>Documents_Package__c</object>
+        <storeOutputAutomatically>true</storeOutputAutomatically>
+    </recordCreates>
+    <recordCreates>
+        <name>Create_Financial_Documents_Package</name>
+        <label>Create Finance Documents Package</label>
+        <locationX>176</locationX>
+        <locationY>539</locationY>
+        <connector>
+            <targetReference>Create_Aftersales_Documents_Package</targetReference>
+        </connector>
+        <inputAssignments>
+            <field>Endorsement_Request__c</field>
+            <value>
+                <elementReference>$Record.Id</elementReference>
+            </value>
+        </inputAssignments>
+        <inputAssignments>
+            <field>Type__c</field>
+            <value>
+                <stringValue>Financial Documentation</stringValue>
+            </value>
+        </inputAssignments>
+        <object>Documents_Package__c</object>
+        <storeOutputAutomatically>true</storeOutputAutomatically>
+    </recordCreates>
+    <recordCreates>
+        <name>Create_Signed_Endorsement_Docs_Document_Pack_Folder</name>
+        <label>Create Signed Endorsement Docs Document Pack Folder</label>
+        <locationX>176</locationX>
+        <locationY>431</locationY>
+        <connector>
+            <targetReference>Create_Financial_Documents_Package</targetReference>
+        </connector>
+        <inputAssignments>
+            <field>Documents_Package__c</field>
+            <value>
+                <elementReference>Create_Endorsement_Docs_Documents_Packages</elementReference>
+            </value>
+        </inputAssignments>
+        <inputAssignments>
+            <field>Type__c</field>
+            <value>
+                <stringValue>Signed Endorsement Docs</stringValue>
+            </value>
+        </inputAssignments>
+        <object>Documents_Package_Folder__c</object>
+        <storeOutputAutomatically>true</storeOutputAutomatically>
+    </recordCreates>
+    <start>
+        <locationX>50</locationX>
+        <locationY>0</locationY>
+        <connector>
+            <targetReference>Create_Endorsement_Docs_Documents_Packages</targetReference>
+        </connector>
+        <object>Endorsement_Request__c</object>
+        <recordTriggerType>Create</recordTriggerType>
+        <triggerType>RecordAfterSave</triggerType>
+    </start>
+    <status>Active</status>
+</Flow>
