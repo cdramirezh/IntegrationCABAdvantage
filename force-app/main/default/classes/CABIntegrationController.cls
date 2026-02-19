@@ -1,6 +1,5 @@
 public with sharing class CABIntegrationController {
     
-    // Clase wrapper que coincide exactamente con tu payload definitivo
     public class CABResponse {
         public String carrierName;
         public String companyDBA; // Opcional
@@ -24,7 +23,7 @@ public with sharing class CABIntegrationController {
     public static String searchCarrier(String dot) {
         String cabAdvantageBotEndpoint = 'https://royalty-bot-production.up.railway.app/get_carrier_data?dot=';
 
-        // 1. Validaciones de Seguridad y Duplicados
+        // 1. Security Check
         if (!Schema.sObjectType.Lead.isAccessible()) {
             throw new AuraHandledException('Insufficient privileges to access Lead records.');
         }
@@ -39,10 +38,10 @@ public with sharing class CABIntegrationController {
         }
 
         try {
-            // 2. Llamada al Middleware (Bot)
+            // 2. Call to the Integration Middleware (CAB Advantage Bot Scrapper)
             Http http = new Http();
             HttpRequest request = new HttpRequest();
-            // Asegúrate de usar la Named Credential configurada
+            // This will eventually become a Named Credential callout, but as Aragorn said: Today is not that day.
             request.setEndpoint(cabAdvantageBotEndpoint + dot);
             request.setMethod('GET');
             request.setTimeout(120000);
@@ -54,19 +53,18 @@ public with sharing class CABIntegrationController {
                 throw new AuraHandledException('Error del bot (' + response.getStatusCode() + '): ' + response.getStatus());
             }
             
-            // 3. Deserialización del payload plano
+            // 3. Payload deserialization
             CABResponse data = (CABResponse) JSON.deserialize(response.getBody(), CABResponse.class);
             System.debug('--- DEBUG: Carrier Name parseado: ' + data.carrierName);
             if (data == null || String.isBlank(data.carrierName)) {
                 throw new AuraHandledException('El bot no encontró información para el DOT: ' + dot);
             }
 
-            // 4. Mapeo y Creación del Lead
             if (!Schema.sObjectType.Lead.isCreateable()) {
                 throw new AuraHandledException('Insufficient privileges to create Lead records.');
             }
             
-            // Campos base y obligatorios
+            // Mandatory fields
             Lead newLead = new Lead(
                 USDOT__c = dot,
                 Company = data.carrierName,
@@ -87,7 +85,7 @@ public with sharing class CABIntegrationController {
                 Status = 'Unqualified'
             );
 
-            // 5. Manejo de campos opcionales (evita asignar nulls)
+            // 5. Handling opcional fields (Avoid assigning nulls)
             if (String.isNotBlank(data.stateFiling)) {
                 newLead.State_Filing__c = data.stateFiling;
             }
