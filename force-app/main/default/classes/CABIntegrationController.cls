@@ -84,8 +84,7 @@ public with sharing class CABIntegrationController {
                 Parking_State__c = data.parkingState,
                 Parking_ZIP__c = data.parkingZIP,
                 Federal_Filing__c = data.federalFiling,
-                Status = 'Unqualified',
-                Owner_DOB__c = Date.newInstance(1980, 1, 1) // Valor constante solicitado
+                Status = 'Unqualified'
             );
 
             // 5. Manejo de campos opcionales (evita asignar nulls)
