@@ -2,7 +2,7 @@ public with sharing class CABIntegrationController {
     
     public class CABResponse {
         public String carrierName;
-        public String companyDBA; // Opcional
+        public String companyDBA; // Optional
         public String carrierPhone;
         public String carrierMobile;
         public String carrierEmail;
@@ -16,7 +16,7 @@ public with sharing class CABIntegrationController {
         public String parkingState;
         public String parkingZIP;
         public String federalFiling;
-        public String stateFiling; // Opcional
+        public String stateFiling; // Optional
     }
 
     @AuraEnabled
@@ -28,34 +28,44 @@ public with sharing class CABIntegrationController {
             throw new AuraHandledException('Insufficient privileges to access Lead records.');
         }
         
-        List<Lead> existingLeads = [SELECT Id FROM Lead WHERE USDOT__c = :dot LIMIT 1];
+        // Check if lead exist and whether it's converted
+        List<Lead> existingLeads = [SELECT Id, IsConverted, ConvertedAccountId 
+                                    FROM Lead 
+                                    WHERE USDOT__c = :dot 
+                                    ORDER BY CreatedDate DESC LIMIT 1];
+
         if (!existingLeads.isEmpty()) {
-            return 'REDIRECT:' + existingLeads[0].Id;
+            Lead foundLead = existingLeads[0];
+            
+            // If the Lead is converted and has associated Account, redirect to the Account
+            if (foundLead.IsConverted && foundLead.ConvertedAccountId != null) {
+                return 'REDIRECT_ACCOUNT:' + foundLead.ConvertedAccountId;
+            }
+            
+            // If the Lead is not converted, redirect to the Lead
+            return 'REDIRECT_LEAD:' + foundLead.Id;
         }
 
+        // 2. Validación de longitud
         if (dot.length() < 5 || dot.length() > 8) {
             throw new AuraHandledException('El número DOT proporcionado no es válido (debe tener entre 5 y 8 dígitos).');
         }
 
         try {
-            // 2. Call to the Integration Middleware (CAB Advantage Bot Scrapper)
             Http http = new Http();
             HttpRequest request = new HttpRequest();
-            // This will eventually become a Named Credential callout, but as Aragorn said: Today is not that day.
             request.setEndpoint(cabAdvantageBotEndpoint + dot);
             request.setMethod('GET');
             request.setTimeout(120000);
-            System.debug('--- DEBUG: Llamando al Endpoint: ' + request.getEndpoint());
+            
             HttpResponse response = http.send(request);
-            System.debug('--- DEBUG: Status Code: ' + response.getStatusCode());
-            System.debug('--- DEBUG: Body Recibido: ' + response.getBody());
+            
             if (response.getStatusCode() != 200) {
                 throw new AuraHandledException('Error del bot (' + response.getStatusCode() + '): ' + response.getStatus());
             }
             
-            // 3. Payload deserialization
             CABResponse data = (CABResponse) JSON.deserialize(response.getBody(), CABResponse.class);
-            System.debug('--- DEBUG: Carrier Name parseado: ' + data.carrierName);
+            
             if (data == null || String.isBlank(data.carrierName)) {
                 throw new AuraHandledException('El bot no encontró información para el DOT: ' + dot);
             }
@@ -95,11 +105,9 @@ public with sharing class CABIntegrationController {
             }
 
             insert newLead;
-            return newLead.Id;
+            return 'REDIRECT_NEW_LEAD:' + newLead.Id;
 
         } catch (Exception e) {
-            System.debug('--- ERROR: ' + e.getMessage());
-            System.debug('--- STACKTRACE: ' + e.getStackTraceString());
             throw new AuraHandledException('Error en la integración: ' + e.getMessage());
         }
     }
