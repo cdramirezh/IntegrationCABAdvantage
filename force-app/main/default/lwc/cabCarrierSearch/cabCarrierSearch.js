@@ -37,54 +37,69 @@ export default class CabCarrierSearch extends NavigationMixin(LightningElement) 
         }
     }
 
+    handleNavigate({ recordId, objectApiName }) {
+        this[NavigationMixin.Navigate]({
+            type: 'standard__recordPage',
+            attributes: {
+                recordId: recordId,
+                objectApiName: objectApiName,
+                actionName: 'view'
+            }
+        });
+    }
+
+    handleToast({ title, message }) {
+        this.dispatchEvent(
+            new ShowToastEvent({
+                title: title,
+                message: message,
+                variant: 'success'
+            })
+        );
+    }
+
     async handleSearch() {
         this.isLoading = true;
-
         try {
             const result = await searchCarrier({ dot: this.dotNumber });
+            const targetId = result.split(':')[1];
 
-            let targetId;
-            let toastTitle;
-            let toastMessage;
-
-            // Lógica para determinar si es un redireccionamiento o creación nueva
-            if (result.startsWith('REDIRECT:')) {
-                targetId = result.replace('REDIRECT:', '');
-                toastTitle = 'Lead Existente';
-                toastMessage = 'Se encontró un Lead con ese DOT. Redirigiendo...';
-            } else {
-                targetId = result;
-                toastTitle = 'Éxito';
-                toastMessage = 'Nuevo Lead creado a partir de CAB Advantage.';
-            }
-
-            // 1. Mostrar confirmación
-            this.dispatchEvent(
-                new ShowToastEvent({
-                    title: toastTitle,
-                    message: toastMessage,
-                    variant: 'success'
+            if (result.startsWith('REDIRECT_ACCOUNT:')) {
+                this.handleNavigate({ recordId: targetId, objectApiName: 'Account' });
+                this.handleToast({
+                    title: 'Existing Account',
+                    message: `An existing Account with DOT: ${this.dotNumber} was found. Redirecting...`
+                });
+            } else if (result.startsWith('REDIRECT_LEAD:')) {
+                this.handleNavigate({ recordId: targetId, objectApiName: 'Lead' });
+                this.handleToast({
+                    title: 'Existing Lead',
+                    message: `An existing Lead with DOT: ${this.dotNumber} was found. Redirecting...`,
                 })
-            );
-
-            // 2. Ejecutar la navegación al registro
-            this[NavigationMixin.Navigate]({
-                type: 'standard__recordPage',
-                attributes: {
-                    recordId: targetId,
-                    objectApiName: 'Lead',
-                    actionName: 'view'
-                }
-            });
+            } else if (result.startsWith('REDIRECT_NEW_LEAD:')) {
+                this.handleNavigate({ recordId: targetId, objectApiName: 'Lead' });
+                this.handleToast({
+                    title: 'New Lead Created',
+                    message: `New Lead with DOT: ${this.dotNumber} was created from CAB Advantage. Redirecting...`,
+                })
+            } else {
+                this.handleToast({
+                    title: 'Unexpected Result',
+                    message: 'The search returned an unexpected result. Please check the console for details.',
+                    variant: 'warning'
+                });
+                console.warn(`Unexpected result from search DOT: ${this.dotNumber}`, result);
+            }
 
         } catch (error) {
             this.dispatchEvent(
                 new ShowToastEvent({
                     title: 'Error in search',
-                    message: error.body?.message || 'An error occurred while connecting to the server',
+                    message: error.body?.message || 'An error occurred in the search process',
                     variant: 'error'
                 })
             );
+            console.error('Error in search:', error);
         } finally {
             this.isLoading = false;
         }
