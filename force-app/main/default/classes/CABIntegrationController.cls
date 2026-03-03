@@ -81,7 +81,6 @@ public with sharing class CABIntegrationController {
                 LastName = data.carrierName,
                 Phone = data.carrierPhone,
                 MobilePhone = data.carrierMobile,
-                Email = data.carrierEmail,
                 Company_Rep__c = data.companyRepresentative,
                 Mailing_Street__c = data.mailingStreet,
                 Mailing_City__c = data.mailingCity,
@@ -96,6 +95,10 @@ public with sharing class CABIntegrationController {
             );
 
             // 5. Handling opcional fields (Avoid assigning nulls)
+            if (String.isNotBlank(data.carrierEmail)) {
+                newLead.Email = data.carrierEmail;
+            }
+
             if (String.isNotBlank(data.stateFiling)) {
                 newLead.State_Filing__c = data.stateFiling;
             }
